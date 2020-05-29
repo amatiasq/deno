@@ -11,4 +11,4 @@ fi
 
 mkdir -p "$DEST"
 deno bundle --config config/tsconfig.json "$PROJECT/main.ts" > "$DEST/bundle.js"
-cp config/canvas-page/index.html "$DEST/index.html"
+cp config/canvas.html "$DEST/index.html"
