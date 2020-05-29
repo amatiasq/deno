@@ -17,7 +17,7 @@ export async function start(
 	extraHtml = '',
 ) {
 	const socketPort = port + 1;
-	let html = 'Loading...';
+	let html = getHtml('', socketPort, 'Loading...');
 
 	const sockets = openSocket(socketPort);
 
@@ -88,7 +88,7 @@ async function watchBundle(
 	output: (content: string) => void,
 ) {
 	const fullpath = join(path, file);
-	const run = async () => output(await buildBundle(path, fullpath));
+	const run = async () => output(await buildBundle(fullpath));
 	const scheduler = new Scheduler(100, run);
 
 	run();
@@ -100,22 +100,29 @@ async function watchBundle(
 	}
 }
 
-async function buildBundle(path: string, file: string) {
+async function buildBundle(file: string) {
 	console.log(`Bundling '${file}'...`);
 
 	await Deno.run({
 		cmd: ['deno', 'cache', file],
 	}).status();
 
-	const [diagnostics, content] = await Deno.bundle(file, undefined, {
-		lib: ['dom'],
-		inlineSourceMap: true,
-	});
+	const buffer = await Deno.run({
+		cmd: ['deno', 'bundle', '--config', 'config/tsconfig.json', file],
+		stdout: 'piped',
+	}).output();
 
-	if (diagnostics) {
-		console.log('Error in compilation:');
-		console.log(Deno.formatDiagnostics(diagnostics));
-	}
+	const content = new TextDecoder().decode(buffer);
+
+	// process.const[(diagnostics, content)] = await Deno.bundle(file, undefined, {
+	// 	lib: ['dom'],
+	// 	inlineSourceMap: true,
+	// });
+
+	// if (diagnostics) {
+	// 	console.log('Error in compilation:');
+	// 	console.log(Deno.formatDiagnostics(diagnostics));
+	// }
 
 	console.log(`Generated ${content.length} bytes`);
 	return content;
@@ -146,12 +153,16 @@ function getHtml(script: string, socketPort: number, extra: string) {
 		${extra}
 		<script>
 
-	(() => {
-		let liveReload = new WebSocket("ws:localhost:${socketPort}");
-		liveReload.onmessage = () => window.location.reload()
-	})()
+(function connect() {
+	let liveReload = new WebSocket('ws:localhost:${socketPort}');
+	liveReload.onmessage = () => window.location.reload();
+	liveReload.onclose = () => {
+		console.error('Live reload disconnected, retrying in 1s...')
+		setTimeout(connect, 1000);
+	};
+})()
 
-	${script}
+${script}
 
 		</script>
 	</body>
@@ -161,15 +172,30 @@ function getHtml(script: string, socketPort: number, extra: string) {
 if (import.meta.main) {
 	const {
 		port,
+		html,
+		canvas,
 		_: [file],
-	} = parse(Deno.args);
+	} = parse(Deno.args, { boolean: ['canvas'] });
+
+	console.log({ port, html, canvas, file });
 
 	if (!file) {
-		console.log(
-			`Usage: ${Deno.execPath()} ${import.meta.url} frontend-file.ts`,
-		);
+		usage();
 		Deno.exit(1);
 	}
 
-	start(Deno.cwd(), file as string, port);
+	const extra = canvas ? '<canvas></canvas>' : html || '';
+	start(Deno.cwd(), file as string, port, extra);
+}
+
+function usage() {
+	console.log(
+		`Usage: ${Deno.execPath()} ${import.meta.url} frontend-file.ts
+
+Options
+--port NUMBER	Port to serve the webpage. Live reload socket port will be NUMBER+1. Default 8080
+--html CONTENT	HTML to include in the webpage before the script
+--canvas	Alias for "--html '<canvas></canvas>'"
+`,
+	);
 }
