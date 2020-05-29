@@ -345,8 +345,8 @@ System.register(
     }
     exports_5("fullscreen", fullscreen);
     function getScreen() {
-      const halfSie = getScreenSize().div(2);
-      return geometry_ts_1.rectangle(halfSie, halfSie);
+      const halfSize = getScreenSize().div(2);
+      return geometry_ts_1.rectangle(halfSize, halfSize);
     }
     exports_5("getScreen", getScreen);
     function getScreenSize() {

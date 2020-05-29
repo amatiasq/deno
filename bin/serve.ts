@@ -177,8 +177,6 @@ if (import.meta.main) {
 		_: [file],
 	} = parse(Deno.args, { boolean: ['canvas'] });
 
-	console.log({ port, html, canvas, file });
-
 	if (!file) {
 		usage();
 		Deno.exit(1);

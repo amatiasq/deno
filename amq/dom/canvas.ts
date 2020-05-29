@@ -15,10 +15,10 @@ export function fullscreen(canvas: HTMLCanvasElement) {
 }
 
 export function getScreen() {
-	const halfSie = getScreenSize().div(2);
-	return rectangle(halfSie, halfSie);
+	const halfSize = getScreenSize().div(2);
+	return rectangle(halfSize, halfSize);
 }
 
 function getScreenSize() {
-	return vector((window as any).innerWidth, (window as any).innerHeight);
+	return vector(window.innerWidth, window.innerHeight);
 }
