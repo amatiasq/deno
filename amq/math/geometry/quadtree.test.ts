@@ -1,7 +1,8 @@
 import { assertEquals } from 'https://deno.land/std/testing/asserts.ts';
-import { ZERO, vector as v, Vector } from './../vector.ts';
-import { rectangle, circle } from './../geometry.ts';
-import { quadtree, depth, queryQuad } from './quadtree.ts';
+
+import { circle, rectangle } from '../geometry.ts';
+import { vector as v, Vector, ZERO } from '../vector.ts';
+import { depth, quadtree, queryQuad } from './quadtree.ts';
 
 const rect = () => rectangle(ZERO, v(10, 10));
 

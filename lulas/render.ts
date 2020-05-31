@@ -5,8 +5,14 @@ import { Vector } from '../amq/math/vector.ts';
 import { Cell } from './cell.ts';
 import { mousePosition } from './interaction.ts';
 
+const BACKGROUND_COLOR = '#0A0A0A';
+const CELL_COLOR = '#5E5D6F';
+const CELL_COLLISION_COLOR = '#F45B69';
+const CELL_INTERACTING_COLOR = '#F6E8EA';
+const QUAD_COLOR = '#282244';
+
 export class Renderer {
-	private readonly context: any;
+	private readonly context: CanvasRenderingContext2D;
 	private leaf = 1;
 
 	constructor(private readonly canvas: any) {
@@ -14,7 +20,10 @@ export class Renderer {
 	}
 
 	clear() {
-		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.context.fillStyle = BACKGROUND_COLOR;
+		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		this.context.closePath();
+
 		this.leaf = 1;
 	}
 
@@ -36,16 +45,16 @@ export class Renderer {
 		const isInteracting = body.contains(mousePosition());
 
 		this.context.fillStyle = isInteracting
-			? 'yellow'
+			? CELL_INTERACTING_COLOR
 			: isColliding
-			? 'red'
-			: '#3B1E05';
+			? CELL_COLLISION_COLOR
+			: CELL_COLOR;
 
-		this.context.strokeStyle = isInteracting
-			? 'transparent'
-			: isColliding
-			? 'yellow'
-			: '#E9B111';
+		// this.context.strokeStyle = isInteracting
+		// 	? 'transparent'
+		// 	: isColliding
+		// 	? 'yellow'
+		// 	: '#E9B111';
 
 		this.context.lineWidth = 1;
 		this.context.fill();
@@ -69,7 +78,7 @@ export class Renderer {
 		this.context.closePath();
 
 		this.context.fillStyle = 'red';
-		this.context.strokeStyle = 'rgba(255, 0, 0, 0.2)';
+		this.context.strokeStyle = QUAD_COLOR;
 		this.context.lineWidth = 1;
 		this.context.stroke();
 
@@ -95,7 +104,7 @@ export class Renderer {
 			this.drawRectangle(area);
 			this.context.closePath();
 
-			this.context.fillStyle = 'rgba(255, 0, 0, 0.2)';
+			this.context.fillStyle = QUAD_COLOR;
 			this.context.fill();
 		}
 

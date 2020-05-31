@@ -1,2 +1,2 @@
 export * from './math/core.ts';
-export * from './math/vector.ts';
+// export { Vector, vector } from './math/vector.ts';

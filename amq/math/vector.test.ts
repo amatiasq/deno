@@ -1,4 +1,5 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
+import { assert, assertEquals } from 'https://deno.land/std/testing/asserts.ts';
+
 import { getX, getY, vector, Vector } from './vector.ts';
 
 Deno.test('Vector: creation', () => {

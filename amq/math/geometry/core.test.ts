@@ -1,7 +1,8 @@
 import { assertEquals } from 'https://deno.land/std/testing/asserts.ts';
-import { circle, rectangle } from './geometry.ts';
-import { vector, ZERO } from './vector.ts';
-import { assertVector } from './vector.test.ts';
+
+import { assertVector } from '../vector.test.ts';
+import { vector, ZERO } from '../vector.ts';
+import { circle, rectangle } from './core.ts';
 
 Deno.test('Geometry: circle.position', () => {
 	const pos = vector(1, 2);

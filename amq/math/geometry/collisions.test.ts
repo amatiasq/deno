@@ -1,7 +1,8 @@
 import { assertEquals } from 'https://deno.land/std/testing/asserts.ts';
-import { Vector, vector, ZERO } from './../vector.ts';
-import { circle, rectangle, Geometry } from './../geometry.ts';
-import { detectCollision, contains } from './collisions.ts';
+
+import { circle, Geometry, rectangle } from '../geometry.ts';
+import { Vector, vector, ZERO } from '../vector.ts';
+import { contains, detectCollision } from './collisions.ts';
 
 const contact = [
 	vector(-1, -1),

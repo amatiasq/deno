@@ -4,6 +4,9 @@ import { QuadEntity } from '../amq/math/geometry/quadtree.ts';
 import { vector, Vector } from '../amq/math/vector.ts';
 import { bounce } from './cell/bounce.ts';
 import { keepInside } from './cell/keepInside.ts';
+import { flocking } from './cell/flocking.ts';
+
+export type QueryMap = (area: Geometry) => Cell[];
 
 export interface Cell extends QuadEntity {
 	velocity: Vector;
@@ -15,25 +18,27 @@ export function createCells(amount: number, screen: Rectangle) {
 	return Array(amount).fill(null).map(randCell(screen));
 }
 
-export function tickCell(
-	cell: Cell,
-	query: (area: Geometry) => Cell[],
-	screen: Rectangle,
-) {
-	const bounced = bounce(cell, screen);
-	const body = keepInside(move(bounced), screen);
-
-	const colliding = query(body).filter(x => x !== cell);
+export function tickCell(cell: Cell, query: QueryMap, screen: Rectangle) {
+	const getCellsAt = (area: Geometry) => query(area).filter(x => x !== cell);
+	const flocked = flocking(cell, getCellsAt);
+	const final = move(flocked, screen);
+	const colliding = getCellsAt(final.body);
 
 	return {
-		...bounced,
-		body,
+		...final,
 		isColliding: Boolean(colliding.length),
 	};
 }
 
-function move(cell: Cell) {
-	return cell.body.withPosition(cell.body.position.merge(cell.velocity));
+function move(cell: Cell, screen: Rectangle) {
+	const velocity = bounce(cell, screen);
+	const body = cell.body.withPosition(cell.body.position.merge(velocity));
+
+	return {
+		...cell,
+		velocity,
+		body: keepInside(body, screen),
+	};
 }
 
 function randCell({ start, end }: Rectangle) {

@@ -1,4 +1,5 @@
 import { radiansToDegrees, TAU } from './core.ts';
+import { withAccessor, WithSetter } from '../code/withAccessor.ts';
 
 export interface Vectorish {
 	x: number;
@@ -11,7 +12,8 @@ export interface Vector {
 	readonly radians: number;
 	readonly degrees: number;
 	readonly magnitude: number;
-	// withMagnitude(magnitude: number): Vector;
+
+	withMagnitude: WithSetter<Vector, number>;
 
 	is(other: Vectorish): boolean;
 	abs(): Vector;
@@ -25,6 +27,8 @@ export interface Vector {
 	mul(val: number): Vector;
 	div(val: number): Vector;
 }
+
+const $with = withAccessor<Vector>();
 
 class VectorImpl implements Vector {
 	constructor(readonly x: number, readonly y: number) {}
@@ -41,10 +45,10 @@ class VectorImpl implements Vector {
 		return Math.hypot(this.x, this.y);
 	}
 
-	// withMagnitude(magnitude: number) {
-	//   const ratio = this.magnitude / magnitude;
-	//   return vector(this.x / ratio, this.y / ratio);
-	// }
+	withMagnitude = $with('magnitude', (magnitude, { x, y }) => {
+		const ratio = this.magnitude / magnitude;
+		return vector(this.x / ratio, this.y / ratio);
+	});
 
 	is({ x, y }: Vectorish) {
 		return this.x === x && this.y === y;
@@ -73,6 +77,10 @@ class VectorImpl implements Vector {
 export const vector = (x: number, y: number): Vector => new VectorImpl(x, y);
 export const getX = (vector: Vector) => vector.x;
 export const getY = (vector: Vector) => vector.y;
+
+export const merge = operateVectorsStatic((l, r) => l + r); // untested
+export const diff = operateVectorsStatic((l, r) => l - r); // untested
+
 export const ZERO = vector(0, 0);
 // export const UNIT = vector(1, 1).withMagnitude(1);
 
@@ -85,6 +93,12 @@ function operateVector(operate: (v: number) => number) {
 function operateVectors(operate: (l: number, r: number) => number) {
 	return function (this: Vector, other: Vector) {
 		return vector(operate(this.x, other.x), operate(this.y, other.y));
+	};
+}
+
+function operateVectorsStatic(operate: (l: number, r: number) => number) {
+	return function (left: Vector, right: Vector) {
+		return vector(operate(left.x, right.x), operate(left.y, right.y));
 	};
 }
 

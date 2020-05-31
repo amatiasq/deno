@@ -1,6 +1,5 @@
-import { getX } from './../vector.ts';
-import { Geometry, Circle, Rectangle } from './../geometry.ts';
-import { Vector, getY } from '../vector.ts';
+import { getX, getY } from '../vector.ts';
+import { Circle, Geometry, Rectangle } from './core.ts';
 
 const collidesX = collidesAxis(getX);
 const collidesY = collidesAxis(getY);

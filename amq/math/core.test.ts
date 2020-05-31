@@ -1,4 +1,5 @@
 import { assertEquals } from 'https://deno.land/std/testing/asserts.ts';
+
 import { degreesToRadians, radiansToDegrees } from './core.ts';
 
 Deno.test('Math: degreesToRadians 90', () => {

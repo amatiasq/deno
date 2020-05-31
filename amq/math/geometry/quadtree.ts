@@ -1,6 +1,6 @@
-import { Geometry, Rectangle, rectangle } from '../geometry.ts';
 import { vector } from '../vector.ts';
 import { detectCollision } from './collisions.ts';
+import { Geometry, Rectangle, rectangle } from './core.ts';
 
 export interface QuadEntity {
 	body: Geometry;

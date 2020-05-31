@@ -6,13 +6,12 @@ const x = getCoords(getX);
 const y = getCoords(getY);
 
 export function bounce(cell: Cell, screen: Rectangle) {
-	const { start: bs, end: be } = cell.body;
+	const { velocity, body } = cell;
+	const { start: bs, end: be } = body;
 	const { start: ss, end: se } = screen;
 	const modifier = vector(x(bs, be, ss, se), y(bs, be, ss, se));
 
-	return modifier.is({ x: 1, y: 1 })
-		? cell
-		: { ...cell, velocity: cell.velocity.apply(modifier) };
+	return modifier.is({ x: 1, y: 1 }) ? velocity : velocity.apply(modifier);
 }
 
 function getCoords(axis: (value: Vector) => number) {

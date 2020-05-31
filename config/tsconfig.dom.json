@@ -3,6 +3,7 @@
 	"exclude": ["./**/*.test.ts"],
 	"compilerOptions": {
 		"target": "esnext",
-		"lib": ["esnext", "dom"]
+		"lib": ["esnext", "dom"],
+		"experimentalDecorators": true
 	}
 }

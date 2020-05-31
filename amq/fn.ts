@@ -1,4 +1,4 @@
-export function compose<U = any, T = any>(
+export function compose<T = any>(
 	first: (value: T) => any,
 	...args: Function[]
 ) {

@@ -10,5 +10,5 @@ then
 fi
 
 mkdir -p "$DEST"
-deno bundle --config config/tsconfig.json "$PROJECT/main.ts" > "$DEST/bundle.js"
+deno bundle --config config/tsconfig.dom.json "$PROJECT/main.ts" > "$DEST/bundle.js"
 cp config/canvas.html "$DEST/index.html"

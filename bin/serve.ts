@@ -108,7 +108,7 @@ async function buildBundle(file: string) {
 	}).status();
 
 	const buffer = await Deno.run({
-		cmd: ['deno', 'bundle', '--config', 'config/tsconfig.json', file],
+		cmd: ['deno', 'bundle', '--config', 'config/tsconfig.dom.json', file],
 		stdout: 'piped',
 	}).output();
 
