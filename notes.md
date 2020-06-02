@@ -1,0 +1,3 @@
+-   Make cells red when collide with each other
+-   Implement flocking behavior
+-   Refactor flocking behavior as 3 plugins of cells
