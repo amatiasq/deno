@@ -1,39 +1,39 @@
 export class Scheduler {
-	private timer: number | null = null;
+  private timer: number | null = null;
 
-	get isRunning() {
-		return this.timer != null;
-	}
+  get isRunning() {
+    return this.timer != null;
+  }
 
-	constructor(
-		private readonly delay: number,
-		private readonly action: () => void,
-	) {}
+  constructor(
+    private readonly delay: number,
+    private readonly action: () => void,
+  ) {}
 
-	start() {
-		if (this.isRunning) {
-			return;
-		}
+  start() {
+    if (this.isRunning) {
+      return;
+    }
 
-		this.timer = setTimeout(() => this.run(), this.delay);
-	}
+    this.timer = setTimeout(() => this.run(), this.delay);
+  }
 
-	stop() {
-		if (!this.isRunning) {
-			return;
-		}
+  stop() {
+    if (!this.isRunning) {
+      return;
+    }
 
-		clearTimeout(this.timer as number);
-		this.timer = null;
-	}
+    clearTimeout(this.timer as number);
+    this.timer = null;
+  }
 
-	restart() {
-		this.stop();
-		this.start();
-	}
+  restart() {
+    this.stop();
+    this.start();
+  }
 
-	run() {
-		this.stop();
-		this.action();
-	}
+  run() {
+    this.stop();
+    this.action();
+  }
 }
