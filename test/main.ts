@@ -1,3 +1,3 @@
-import { start } from "../bin/canvas.ts";
+import { start } from '../bin/canvas.ts';
 
-start("..", "run.ts", 8001);
+start('..', 'run.ts', 8001);
