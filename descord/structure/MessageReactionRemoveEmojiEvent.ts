@@ -1,6 +1,6 @@
 import { RawMessageReactionRemoveEmojiEvent } from '../raw/RawMessageReactionRemoveEmojiEvent.ts';
 import { ChannelId, GuildId, MessageId } from '../internals/type-aliases.ts';
-import { Emoji, wrapEmojiPartial, unwrapEmojiPartial } from './Emoji.ts';
+import { Emoji, wrapEmoji, wrapEmojiPartial, unwrapEmoji, unwrapEmojiPartial } from './Emoji.ts';
 
 export interface MessageReactionRemoveEmojiEvent {
 	/** the id of the channel */

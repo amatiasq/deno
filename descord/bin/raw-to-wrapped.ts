@@ -74,18 +74,22 @@ export ${
 
 function adaptImports(name: string, imports: string, partials: string[]) {
 	const list = PARSEABLE.reduce(
-		(x, y, i) => x.replace(y, `${PARSEABLE_IMPORT[i]}parse${y}, unparse${y}`),
+		(x, y, i) =>
+			x.replace(y, `${PARSEABLE_IMPORT[i]}parse${y}, unparse${y}`),
 		imports,
 	)
-		.replace(/import\s*\{\s*Raw(\w+)\s*\}/g, 'import { $1, wrap$1, unwrap$1 }')
+		.replace(
+			/import\s*\{\s*Raw(\w+)\s*\}/g,
+			'import { $1, wrap$1, unwrap$1 }',
+		)
 		.split('\n')
 		.filter(Boolean);
 
 	const finish = partials.reduce(
 		(x, partial) =>
 			x.replace(
-				new RegExp(`wrap${partial}(\\b)`, 'g'),
-				`wrap${partial}Partial$1`,
+				new RegExp(`(un)?wrap${partial}(\\b)`, 'g'),
+				`$1wrap${partial}, $1wrap${partial}Partial$2`,
 			),
 		list.join('\n'),
 	);
@@ -146,7 +150,9 @@ function writeUnwrapPartial(parent: string, properties: string) {
 	const unparse = forceOptional(
 		wrapConversor('unparse', identity, toCamelCase),
 	);
-	const unwrap = forceOptional(wrapConversor('unwrap', identity, toCamelCase));
+	const unwrap = forceOptional(
+		wrapConversor('unwrap', identity, toCamelCase),
+	);
 	const props = serialization(properties, casing, unparse, unwrap);
 	const child = parent ? `unwrap${parent}(x)` : 'x';
 	return buildBody(child, props);
@@ -154,7 +160,10 @@ function writeUnwrapPartial(parent: string, properties: string) {
 
 function buildBody(base: string, props: string) {
 	return props.length
-		? `return {\n\t\t...${base},\n\t${props.replace(/\n\t/g, '\n\t\t')}\n\t};`
+		? `return {\n\t\t...${base},\n\t${props.replace(
+				/\n\t/g,
+				'\n\t\t',
+		  )}\n\t};`
 		: `return ${base};`;
 }
 
@@ -178,12 +187,18 @@ function serialization(
 			if (/: Raw/.test(line)) {
 				return line
 					.replace(/((?:\w|_)+)(\??): Raw(\w+);/, onEntity)
-					.replace(/((?:\w|_)+)(\??): Raw(\w+)\[\];/, doArrays(onEntity));
+					.replace(
+						/((?:\w|_)+)(\??): Raw(\w+)\[\];/,
+						doArrays(onEntity),
+					);
 			}
 
 			if (/: Partial<Raw/.test(line)) {
 				return line
-					.replace(/((?:\w|_)+)(\??): Partial<Raw(\w+)>;/, doPartial(onEntity))
+					.replace(
+						/((?:\w|_)+)(\??): Partial<Raw(\w+)>;/,
+						doPartial(onEntity),
+					)
 					.replace(
 						/((?:\w|_)+)(\??): Partial<Raw(\w+)>\[\];/,
 						doPartial(doArrays(onEntity)),

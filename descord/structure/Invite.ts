@@ -1,9 +1,9 @@
 import { RawInvite } from '../raw/RawInvite.ts';
 import { InviteCode, integer } from '../internals/type-aliases.ts';
 import { TargetUserType } from '../enum/TargetUserType.ts';
-import { Guild, wrapGuildPartial, unwrapGuildPartial } from './Guild.ts';
-import { Channel, wrapChannelPartial, unwrapChannelPartial } from './Channel.ts';
-import { User, wrapUserPartial, unwrapUserPartial } from './User.ts';
+import { Guild, wrapGuild, wrapGuildPartial, unwrapGuild, unwrapGuildPartial } from './Guild.ts';
+import { Channel, wrapChannel, wrapChannelPartial, unwrapChannel, unwrapChannelPartial } from './Channel.ts';
+import { User, wrapUser, wrapUserPartial, unwrapUser, unwrapUserPartial } from './User.ts';
 
 // https://discord.com/developers/docs/resources/invite#invite-object-invite-structure
 

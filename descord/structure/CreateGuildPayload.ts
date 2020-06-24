@@ -9,7 +9,7 @@ import { VerificationLevel } from '../enum/VerificationLevel.ts';
 import { MessageNotificationLevel } from '../enum/MessageNotificationLevel.ts';
 import { ExplicitContentFilterLevel } from '../enum/ExplicitContentFilterLevel.ts';
 import { Role, wrapRole, unwrapRole } from './Role.ts';
-import { Channel, wrapChannelPartial, unwrapChannelPartial } from './Channel.ts';
+import { Channel, wrapChannel, wrapChannelPartial, unwrapChannel, unwrapChannelPartial } from './Channel.ts';
 
 // https://discord.com/developers/docs/resources/guild#create-guild-json-params
 

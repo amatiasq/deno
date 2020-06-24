@@ -2,7 +2,7 @@ import { RawAuditLog } from '../raw/RawAuditLog.ts';
 import { Webhook, wrapWebhook, unwrapWebhook } from './Webhook.ts';
 import { User, wrapUser, unwrapUser } from './User.ts';
 import { AuditLogEntry, wrapAuditLogEntry, unwrapAuditLogEntry } from './AuditLogEntry.ts';
-import { Integration, wrapIntegrationPartial, unwrapIntegrationPartial } from './Integration.ts';
+import { Integration, wrapIntegration, wrapIntegrationPartial, unwrapIntegration, unwrapIntegrationPartial } from './Integration.ts';
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure
 

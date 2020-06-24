@@ -5,7 +5,7 @@ import {
 	MessageId,
 	UserId,
 } from '../internals/type-aliases.ts';
-import { Emoji, wrapEmojiPartial, unwrapEmojiPartial } from './Emoji.ts';
+import { Emoji, wrapEmoji, wrapEmojiPartial, unwrapEmoji, unwrapEmojiPartial } from './Emoji.ts';
 
 export interface MessageReactionRemoveEvent {
 	/** the id of the user */

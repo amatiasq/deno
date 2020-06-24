@@ -6,7 +6,7 @@ import {
 	InviteCode,
 	parseISO8601Timestamp, unparseISO8601Timestamp,
 } from '../internals/type-aliases.ts';
-import { User, wrapUserPartial, unwrapUserPartial } from './User.ts';
+import { User, wrapUser, wrapUserPartial, unwrapUser, unwrapUserPartial } from './User.ts';
 
 export interface InviteCreateEvent {
 	/** the channel the invite is for */

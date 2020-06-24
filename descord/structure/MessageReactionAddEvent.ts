@@ -6,7 +6,7 @@ import {
 	UserId,
 } from '../internals/type-aliases.ts';
 import { GuildMember, wrapGuildMember, unwrapGuildMember } from './GuildMember.ts';
-import { Emoji, wrapEmojiPartial, unwrapEmojiPartial } from './Emoji.ts';
+import { Emoji, wrapEmoji, wrapEmojiPartial, unwrapEmoji, unwrapEmojiPartial } from './Emoji.ts';
 
 export interface MessageReactionAddEvent {
 	/** the id of the user */

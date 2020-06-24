@@ -1,5 +1,5 @@
 import { RawConnection } from '../raw/RawConnection.ts';
-import { Integration, wrapIntegrationPartial, unwrapIntegrationPartial } from './Integration.ts';
+import { Integration, wrapIntegration, wrapIntegrationPartial, unwrapIntegration, unwrapIntegrationPartial } from './Integration.ts';
 import { VisibilityType } from '../enum/VisibilityType.ts';
 
 // https://discord.com/developers/docs/resources/user#connection-object-connection-structure
