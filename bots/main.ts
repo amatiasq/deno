@@ -1,5 +1,5 @@
 import { config } from 'https://deno.land/x/dotenv/mod.ts';
-import { Bot, Intent } from '../descord-bot/mod.ts';
+import { Bot, Intent } from '../denord-bot/mod.ts';
 
 const { MARTI_BOT_ID, MARTI_TOKEN } = config();
 
