@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "bots": {
+      "cmd": "deno run ./bots/main.ts",
+      "desc": "Start the bots"
+    }
+  },
+  "allow": [
+    "read",
+    "net"
+  ]
+}
