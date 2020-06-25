@@ -20,15 +20,15 @@ ignore() {
     return 1
 }
 
-mkdir -p structure
+mkdir -p descord/structure
 
-for file in raw/Raw*.ts
+for file in descord/raw/Raw*.ts
 do
     if ignore "$file"
     then
         continue
     fi
 
-    dest=$(echo $file | sed -e 's@^raw/Raw@@')
-    cat $file | deno run ./bin/raw-to-wrapped.ts > structure/$dest
+    dest=$(echo $file | sed -e 's@^descord/raw/Raw@@')
+    cat $file | deno run ./descord/bin/raw-to-wrapped.ts > ./descord/structure/$dest
 done
