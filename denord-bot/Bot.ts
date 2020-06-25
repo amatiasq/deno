@@ -1,10 +1,10 @@
-import { DiscordClient } from '../descord/DiscordClient.ts';
+import { DiscordClient } from '../denord/DiscordClient.ts';
 import createClient, {
 	DiscordEvent,
 	Intent,
 	Message,
 	User,
-} from '../descord/mod.ts';
+} from '../denord/mod.ts';
 import { BotMessage, wrapBotMessage } from './structure/Message.ts';
 import { logOnce } from './util/log.ts';
 import { padLeft, removeStart, stringish } from './util/string.ts';

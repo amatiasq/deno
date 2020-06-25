@@ -2,7 +2,7 @@ import { Bot } from '../Bot.ts';
 import { datetime } from '../util/datetime.ts';
 import { containsWord, normalize, remove, trim } from '../util/string.ts';
 import { wrapChannel } from './Channel.ts';
-import { Message, DiscordClient } from '../../descord/mod.ts';
+import { Message, DiscordClient } from '../../denord/mod.ts';
 
 type Unpromisify<T> = T extends Promise<infer U> ? U : T;
 export type BotMessage = Unpromisify<ReturnType<typeof wrapBotMessage>>;

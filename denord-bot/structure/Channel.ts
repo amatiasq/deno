@@ -2,7 +2,7 @@ import {
 	Channel,
 	CreateMessagePayload,
 	DiscordClient,
-} from '../../descord/mod.ts';
+} from '../../denord/mod.ts';
 
 export type ExtendedChannel = ReturnType<typeof wrapChannel>;
 
