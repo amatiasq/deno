@@ -1,5 +1,6 @@
 import { RawChannel } from '../raw/RawChannel.ts';
 import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
+import { channelMethods } from '../extensions/channelMethods.ts';
 import { ChannelType } from '../enum/ChannelType.ts';
 import {
 	ApplicationId,
@@ -15,7 +16,7 @@ import { User, wrapUser, unwrapUser } from './User.ts';
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
 
-export interface Channel {
+export interface Channel extends ReturnType<typeof channelMethods> {
 	/** the id of this channel */
 	id: ChannelId;
 	/** the type of channel */
@@ -52,6 +53,7 @@ export interface Channel {
 	parentId?: CategoryId;
 	/** when the last pinned message was pinned (ISO8601 timestamp) */
 	lastPinTimestamp?: Date;
+	// METHODS: ../extensions/channelMethods.ts
 }
 
 
@@ -61,6 +63,7 @@ export function wrapChannel(x: RawChannel): Channel {
 		permissionOverwrites: x.permission_overwrites && x.permission_overwrites.map(wrapOverwrite),
 		recipients: x.recipients && x.recipients.map(wrapUser),
 		lastPinTimestamp: x.last_pin_timestamp && parseISO8601Timestamp(x.last_pin_timestamp),
+		...channelMethods(x),
 	};
 }
 

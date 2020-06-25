@@ -24,6 +24,7 @@ const PARSED = [
 ];
 
 const HAS_UNDERSCORE_PROP = /(\w+(?:_\w+)+)(\??):/;
+const METHODS = /\/\/ METHODS: ..\/extensions\/(\w+).ts/;
 
 console.log(await main());
 
@@ -37,19 +38,98 @@ function transform(content: string) {
 	const { name, parent, imports, properties, partials, hasCasing } = parse(
 		content,
 	);
-	const newImports = adaptImports(name, imports, partials, hasCasing);
+
+	const newImports = adaptImports(content, imports, partials, hasCasing);
 	const withParsers = PARSEABLE.reduce(
 		(x, y, i) => x.replace(new RegExp(`: ${y}`, 'g'), `: ${PARSED[i]}`),
 		content,
 	);
 
-	const result = withParsers
+	let result = withParsers
 		.replace(imports, newImports)
 		.replace(/Raw(\w+)/g, '$1');
+
+	const extensions = content.match(METHODS);
+	if (extensions) {
+		result = result
+			.replace(
+				/interface (\w+) extends (\w+) \{/,
+				`interface $1 extends $2, ReturnType<typeof ${extensions[1]}> {`,
+			)
+			.replace(
+				/interface (\w+) \{/,
+				`interface $1 extends ReturnType<typeof ${extensions[1]}> {`,
+			);
+	}
 
 	return `import { Raw${name} } from '../raw/Raw${name}.ts';
 ${toCamelCase(result)}
 ${writeFunctions(name, parent, properties, hasCasing)}`;
+}
+
+function parse(content: string) {
+	const match = content.match(
+		/((?:.|\n)*)export interface Raw(\w+)(?: extends Raw(\w+))? \{((?:.|\n)*)\}/m,
+	);
+
+	if (!match) {
+		console.error('Interface not found in:\n\n', content);
+		Deno.exit(1);
+	}
+
+	const partials = content.matchAll(/Partial<Raw(\w+)>/g);
+
+	return {
+		imports: match[1],
+		name: match[2],
+		parent: match[3],
+		properties: match[4],
+		partials: [...partials].map(x => x[1]),
+		hasCasing: HAS_UNDERSCORE_PROP.test(content),
+	};
+}
+
+function adaptImports(
+	content: string,
+	imports: string,
+	partials: string[],
+	hasCasing: boolean,
+) {
+	const list = PARSEABLE.reduce(
+		(x, y, i) =>
+			x.replace(y, `${PARSEABLE_IMPORT[i]}parse${y}, unparse${y}`),
+		imports,
+	)
+		.replace(
+			/import\s*\{\s*Raw(\w+)\s*\}/g,
+			'import { $1, wrap$1, unwrap$1 }',
+		)
+		.split('\n')
+		.filter(Boolean);
+
+	const extension = content.match(METHODS);
+	if (extension) {
+		list.unshift(
+			`import { ${extension[1]} } from '../extensions/${extension[1]}.ts';`,
+		);
+	}
+
+	if (hasCasing) {
+		list.unshift(
+			"import { toApiCasing, fromApiCasing } from '../internals/casing.ts';",
+		);
+	}
+
+	const finish = partials.reduce(
+		(x, partial) =>
+			x.replace(
+				new RegExp(`(un)?wrap${partial}(\\b)`, 'g'),
+				`$1wrap${partial}, $1wrap${partial}Partial$2`,
+			),
+		list.join('\n'),
+	);
+
+	return `${finish.replace('// https:', '\n// https:')}\n\n`;
 }
 
 function writeFunctions(
@@ -58,10 +138,15 @@ function writeFunctions(
 	properties: string,
 	hasCasing: boolean,
 ) {
+	const unwrapPrps = properties
+		.split('\n')
+		.filter(x => !METHODS.test(x))
+		.join('\n');
+
 	const wrapBody = writeWrap(parent, properties, hasCasing);
-	const unwrapBody = writeUnwrap(parent, properties, hasCasing);
+	const unwrapBody = writeUnwrap(parent, unwrapPrps, hasCasing);
 	const wrapPartialBody = writeWrapPartial(parent, properties, hasCasing);
-	const unwrapPartialBody = writeUnwrapPartial(parent, properties, hasCasing);
+	const unwrapPartialBody = writeUnwrapPartial(parent, unwrapPrps, hasCasing);
 
 	const isWrapSimple = wrapBody.match(/^return (\w+)\(x\);$/);
 	const isUnwrapSimple = unwrapBody.match(/^return (\w+)\(x\);$/);
@@ -90,64 +175,6 @@ export ${
 			? `const unwrap${name}Partial = unwrap${name} as (x: Partial<${name}>) => Partial<Raw${name}>;`
 			: `function unwrap${name}Partial(x: Partial<${name}>): Partial<Raw${name}> {\n\t${unwrapPartialBody}\n}`
 	}`;
-}
-
-function adaptImports(
-	name: string,
-	imports: string,
-	partials: string[],
-	hasCasing: boolean,
-) {
-	const list = PARSEABLE.reduce(
-		(x, y, i) =>
-			x.replace(y, `${PARSEABLE_IMPORT[i]}parse${y}, unparse${y}`),
-		imports,
-	)
-		.replace(
-			/import\s*\{\s*Raw(\w+)\s*\}/g,
-			'import { $1, wrap$1, unwrap$1 }',
-		)
-		.split('\n')
-		.filter(Boolean);
-
-	if (hasCasing) {
-		list.unshift(
-			"import { toApiCasing, fromApiCasing } from '../internals/casing.ts';",
-		);
-	}
-
-	const finish = partials.reduce(
-		(x, partial) =>
-			x.replace(
-				new RegExp(`(un)?wrap${partial}(\\b)`, 'g'),
-				`$1wrap${partial}, $1wrap${partial}Partial$2`,
-			),
-		list.join('\n'),
-	);
-
-	return `${finish.replace('// https:', '\n// https:')}\n\n`;
-}
-
-function parse(content: string) {
-	const match = content.match(
-		/((?:.|\n)*)export interface Raw(\w+)(?: extends Raw(\w+))? \{((?:.|\n)*)\}/m,
-	);
-
-	if (!match) {
-		console.error('Interface not found in:\n\n', content);
-		Deno.exit(1);
-	}
-
-	const partials = content.matchAll(/Partial<Raw(\w+)>/g);
-
-	return {
-		imports: match[1],
-		name: match[2],
-		parent: match[3],
-		properties: match[4],
-		partials: [...partials].map(x => x[1]),
-		hasCasing: HAS_UNDERSCORE_PROP.test(content),
-	};
 }
 
 function writeWrap(parent: string, properties: string, hasCasing: boolean) {
@@ -219,17 +246,16 @@ function writeUnwrapPartial(
 }
 
 function buildBody(base: string, props: string) {
-	return props.length
-		? `return {\n\t\t...${base},\n\t${props.replace(
-				/\n\t/g,
-				'\n\t\t',
-		  )}\n\t};`
-		: `return ${base};`;
+	if (!props) {
+		return `return ${base};`;
+	}
+
+	const propsDef = props.replace(/\n\t/g, '\n\t\t');
+	return `return {\n\t\t...${base},\n\t${propsDef}\n\t};`;
 }
 
 function serialization(
 	properties: string,
-	// onCasing: Conversor,
 	onSerializable: Conversor,
 	onEntity: Conversor,
 ) {
@@ -265,9 +291,9 @@ function serialization(
 					);
 			}
 
-			// if (HAS_UNDERSCORE_PROP.test(line)) {
-			// 	return line.replace(/((?:\w|_)+)(\??): .*;/, onCasing);
-			// }
+			if (METHODS.test(line)) {
+				return line.replace(METHODS, `...$1(x),`);
+			}
 		})
 		.filter(Boolean)
 		.join('\n');

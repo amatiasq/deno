@@ -1,5 +1,6 @@
 import { RawUser } from '../raw/RawUser.ts';
 import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
+import { userMethods } from '../extensions/userMethods.ts';
 import {
 	UserId,
 	ImageData,
@@ -9,7 +10,7 @@ import { PremiumType } from '../enum/PremiumType.ts';
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
 
-export interface User {
+export interface User extends ReturnType<typeof userMethods> {
 	/** the user's id	identify */
 	id: UserId;
 	/** the user's username, not unique across the platform	identify */
@@ -36,6 +37,7 @@ export interface User {
 	premiumType?: PremiumType;
 	/** the public flags on a user's account	identify */
 	publicFlags?: UserFlag[];
+	// METHODS: ../extensions/userMethods.ts
 }
 
 
@@ -44,6 +46,7 @@ export function wrapUser(x: RawUser): User {
 		...fromApiCasing(x),
 		flags: x.flags && parseUserFlagInteger(x.flags),
 		publicFlags: x.public_flags && parseUserFlagInteger(x.public_flags),
+		...userMethods(x),
 	};
 }
 

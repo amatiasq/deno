@@ -34,4 +34,5 @@ export interface RawUser {
 	premium_type?: PremiumType;
 	/** the public flags on a user's account	identify */
 	public_flags?: UserFlagInteger;
+	// METHODS: ../extensions/userMethods.ts
 }

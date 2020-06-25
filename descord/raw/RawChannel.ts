@@ -49,4 +49,5 @@ export interface RawChannel {
 	parent_id?: CategoryId;
 	/** when the last pinned message was pinned (ISO8601 timestamp) */
 	last_pin_timestamp?: ISO8601Timestamp;
+	// METHODS: ../extensions/channelMethods.ts
 }
