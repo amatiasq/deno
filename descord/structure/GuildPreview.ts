@@ -1,4 +1,5 @@
 import { RawGuildPreview } from '../raw/RawGuildPreview.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildFeature } from '../enum/GuildFeature.ts';
 import { GuildId, ImageData, integer } from '../internals/type-aliases.ts';
 import { Emoji, wrapEmoji, unwrapEmoji } from './Emoji.ts';
@@ -31,40 +32,28 @@ export interface GuildPreview {
 
 export function wrapGuildPreview(x: RawGuildPreview): GuildPreview {
 	return {
-		...x,
-		discoverySplash: x.discovery_splash && x.discovery_splash,
+		...fromApiCasing(x),
 		emojis: x.emojis.map(wrapEmoji),
-		approximateMemberCount: x.approximate_member_count,
-		approximatePresenceCount: x.approximate_presence_count,
 	};
 }
 
 export function unwrapGuildPreview(x: GuildPreview): RawGuildPreview {
 	return {
-		...x,
-		discovery_splash: x.discoverySplash && x.discoverySplash,
+		...toApiCasing(x),
 		emojis: x.emojis.map(unwrapEmoji),
-		approximate_member_count: x.approximateMemberCount,
-		approximate_presence_count: x.approximatePresenceCount,
 	};
 }
 
 export function wrapGuildPreviewPartial(x: Partial<RawGuildPreview>): Partial<GuildPreview> {
 	return {
-		...x,
-		discoverySplash: x.discovery_splash && x.discovery_splash,
+		...fromApiCasing(x),
 		emojis: x.emojis && x.emojis.map(wrapEmoji),
-		approximateMemberCount: x.approximate_member_count && x.approximate_member_count,
-		approximatePresenceCount: x.approximate_presence_count && x.approximate_presence_count,
 	};
 }
 
 export function unwrapGuildPreviewPartial(x: Partial<GuildPreview>): Partial<RawGuildPreview> {
 	return {
-		...x,
-		discovery_splash: x.discoverySplash && x.discoverySplash,
+		...toApiCasing(x),
 		emojis: x.emojis && x.emojis.map(unwrapEmoji),
-		approximate_member_count: x.approximateMemberCount && x.approximateMemberCount,
-		approximate_presence_count: x.approximatePresenceCount && x.approximatePresenceCount,
 	};
 }

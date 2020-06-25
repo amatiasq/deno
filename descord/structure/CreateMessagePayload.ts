@@ -1,4 +1,5 @@
 import { RawCreateMessagePayload } from '../raw/RawCreateMessagePayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { AllowedMentions, wrapAllowedMentions, unwrapAllowedMentions } from './AllowedMentions.ts';
 import { Embed, wrapEmbed, unwrapEmbed } from './Embed.ts';
 
@@ -24,7 +25,7 @@ export interface CreateMessagePayload {
 
 export function wrapCreateMessagePayload(x: RawCreateMessagePayload): CreateMessagePayload {
 	return {
-		...x,
+		...fromApiCasing(x),
 		embed: x.embed && wrapEmbed(x.embed),
 		allowedMentions: x.allowed_mentions && wrapAllowedMentions(x.allowed_mentions),
 	};
@@ -32,7 +33,7 @@ export function wrapCreateMessagePayload(x: RawCreateMessagePayload): CreateMess
 
 export function unwrapCreateMessagePayload(x: CreateMessagePayload): RawCreateMessagePayload {
 	return {
-		...x,
+		...toApiCasing(x),
 		embed: x.embed && unwrapEmbed(x.embed),
 		allowed_mentions: x.allowedMentions && unwrapAllowedMentions(x.allowedMentions),
 	};

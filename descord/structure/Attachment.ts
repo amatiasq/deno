@@ -1,4 +1,5 @@
 import { RawAttachment } from '../raw/RawAttachment.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { AttachmentId, integer } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/channel#attachment-object-attachment-structure
@@ -21,30 +22,10 @@ export interface Attachment {
 }
 
 
-export function wrapAttachment(x: RawAttachment): Attachment {
-	return {
-		...x,
-		proxyUrl: x.proxy_url,
-	};
-}
+export const wrapAttachment = fromApiCasing as (x: RawAttachment) => Attachment;
 
-export function unwrapAttachment(x: Attachment): RawAttachment {
-	return {
-		...x,
-		proxy_url: x.proxyUrl,
-	};
-}
+export const unwrapAttachment = toApiCasing as (x: Attachment) => RawAttachment;
 
-export function wrapAttachmentPartial(x: Partial<RawAttachment>): Partial<Attachment> {
-	return {
-		...x,
-		proxyUrl: x.proxy_url && x.proxy_url,
-	};
-}
+export const wrapAttachmentPartial = wrapAttachment as (x: Partial<RawAttachment>) => Partial<Attachment>;
 
-export function unwrapAttachmentPartial(x: Partial<Attachment>): Partial<RawAttachment> {
-	return {
-		...x,
-		proxy_url: x.proxyUrl && x.proxyUrl,
-	};
-}
+export const unwrapAttachmentPartial = unwrapAttachment as (x: Partial<Attachment>) => Partial<RawAttachment>;

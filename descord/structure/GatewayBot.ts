@@ -1,4 +1,5 @@
 import { RawGatewayBot } from '../raw/RawGatewayBot.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GatewaySessionStartLimit, wrapGatewaySessionStartLimit, unwrapGatewaySessionStartLimit } from './GatewaySessionStartLimit.ts';
 
 export interface GatewayBot {
@@ -13,28 +14,28 @@ export interface GatewayBot {
 
 export function wrapGatewayBot(x: RawGatewayBot): GatewayBot {
 	return {
-		...x,
+		...fromApiCasing(x),
 		sessionStartLimit: wrapGatewaySessionStartLimit(x.session_start_limit),
 	};
 }
 
 export function unwrapGatewayBot(x: GatewayBot): RawGatewayBot {
 	return {
-		...x,
+		...toApiCasing(x),
 		session_start_limit: unwrapGatewaySessionStartLimit(x.sessionStartLimit),
 	};
 }
 
 export function wrapGatewayBotPartial(x: Partial<RawGatewayBot>): Partial<GatewayBot> {
 	return {
-		...x,
+		...fromApiCasing(x),
 		sessionStartLimit: x.session_start_limit && wrapGatewaySessionStartLimit(x.session_start_limit),
 	};
 }
 
 export function unwrapGatewayBotPartial(x: Partial<GatewayBot>): Partial<RawGatewayBot> {
 	return {
-		...x,
+		...toApiCasing(x),
 		session_start_limit: x.sessionStartLimit && unwrapGatewaySessionStartLimit(x.sessionStartLimit),
 	};
 }

@@ -1,4 +1,5 @@
 import { RawCreateDmPayload } from '../raw/RawCreateDmPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { UserId } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/user#create-dm-json-params
@@ -9,30 +10,10 @@ export interface CreateDmPayload {
 }
 
 
-export function wrapCreateDmPayload(x: RawCreateDmPayload): CreateDmPayload {
-	return {
-		...x,
-		recipientId: x.recipient_id,
-	};
-}
+export const wrapCreateDmPayload = fromApiCasing as (x: RawCreateDmPayload) => CreateDmPayload;
 
-export function unwrapCreateDmPayload(x: CreateDmPayload): RawCreateDmPayload {
-	return {
-		...x,
-		recipient_id: x.recipientId,
-	};
-}
+export const unwrapCreateDmPayload = toApiCasing as (x: CreateDmPayload) => RawCreateDmPayload;
 
-export function wrapCreateDmPayloadPartial(x: Partial<RawCreateDmPayload>): Partial<CreateDmPayload> {
-	return {
-		...x,
-		recipientId: x.recipient_id && x.recipient_id,
-	};
-}
+export const wrapCreateDmPayloadPartial = wrapCreateDmPayload as (x: Partial<RawCreateDmPayload>) => Partial<CreateDmPayload>;
 
-export function unwrapCreateDmPayloadPartial(x: Partial<CreateDmPayload>): Partial<RawCreateDmPayload> {
-	return {
-		...x,
-		recipient_id: x.recipientId && x.recipientId,
-	};
-}
+export const unwrapCreateDmPayloadPartial = unwrapCreateDmPayload as (x: Partial<CreateDmPayload>) => Partial<RawCreateDmPayload>;

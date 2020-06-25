@@ -1,4 +1,5 @@
 import { RawModifyGuildMemberPayload } from '../raw/RawModifyGuildMemberPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { RoleId, ChannelId } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/guild#modify-guild-member-json-params
@@ -17,19 +18,9 @@ export interface ModifyGuildMemberPayload {
 }
 
 
-export function wrapModifyGuildMemberPayload(x: RawModifyGuildMemberPayload): ModifyGuildMemberPayload {
-	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-	};
-}
+export const wrapModifyGuildMemberPayload = fromApiCasing as (x: RawModifyGuildMemberPayload) => ModifyGuildMemberPayload;
 
-export function unwrapModifyGuildMemberPayload(x: ModifyGuildMemberPayload): RawModifyGuildMemberPayload {
-	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-	};
-}
+export const unwrapModifyGuildMemberPayload = toApiCasing as (x: ModifyGuildMemberPayload) => RawModifyGuildMemberPayload;
 
 export const wrapModifyGuildMemberPayloadPartial = wrapModifyGuildMemberPayload as (x: Partial<RawModifyGuildMemberPayload>) => Partial<ModifyGuildMemberPayload>;
 

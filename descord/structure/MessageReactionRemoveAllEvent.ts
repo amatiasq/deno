@@ -1,4 +1,5 @@
 import { RawMessageReactionRemoveAllEvent } from '../raw/RawMessageReactionRemoveAllEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, GuildId, MessageId } from '../internals/type-aliases.ts';
 
 export interface MessageReactionRemoveAllEvent {
@@ -11,38 +12,10 @@ export interface MessageReactionRemoveAllEvent {
 }
 
 
-export function wrapMessageReactionRemoveAllEvent(x: RawMessageReactionRemoveAllEvent): MessageReactionRemoveAllEvent {
-	return {
-		...x,
-		channelId: x.channel_id,
-		messageId: x.message_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapMessageReactionRemoveAllEvent = fromApiCasing as (x: RawMessageReactionRemoveAllEvent) => MessageReactionRemoveAllEvent;
 
-export function unwrapMessageReactionRemoveAllEvent(x: MessageReactionRemoveAllEvent): RawMessageReactionRemoveAllEvent {
-	return {
-		...x,
-		channel_id: x.channelId,
-		message_id: x.messageId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapMessageReactionRemoveAllEvent = toApiCasing as (x: MessageReactionRemoveAllEvent) => RawMessageReactionRemoveAllEvent;
 
-export function wrapMessageReactionRemoveAllEventPartial(x: Partial<RawMessageReactionRemoveAllEvent>): Partial<MessageReactionRemoveAllEvent> {
-	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-		messageId: x.message_id && x.message_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapMessageReactionRemoveAllEventPartial = wrapMessageReactionRemoveAllEvent as (x: Partial<RawMessageReactionRemoveAllEvent>) => Partial<MessageReactionRemoveAllEvent>;
 
-export function unwrapMessageReactionRemoveAllEventPartial(x: Partial<MessageReactionRemoveAllEvent>): Partial<RawMessageReactionRemoveAllEvent> {
-	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-		message_id: x.messageId && x.messageId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapMessageReactionRemoveAllEventPartial = unwrapMessageReactionRemoveAllEvent as (x: Partial<MessageReactionRemoveAllEvent>) => Partial<RawMessageReactionRemoveAllEvent>;

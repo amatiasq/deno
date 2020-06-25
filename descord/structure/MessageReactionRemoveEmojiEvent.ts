@@ -1,4 +1,5 @@
 import { RawMessageReactionRemoveEmojiEvent } from '../raw/RawMessageReactionRemoveEmojiEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, GuildId, MessageId } from '../internals/type-aliases.ts';
 import { Emoji, wrapEmoji, wrapEmojiPartial, unwrapEmoji, unwrapEmojiPartial } from './Emoji.ts';
 
@@ -16,40 +17,28 @@ export interface MessageReactionRemoveEmojiEvent {
 
 export function wrapMessageReactionRemoveEmojiEvent(x: RawMessageReactionRemoveEmojiEvent): MessageReactionRemoveEmojiEvent {
 	return {
-		...x,
-		channelId: x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-		messageId: x.message_id,
+		...fromApiCasing(x),
 		emoji: wrapEmojiPartial(x.emoji),
 	};
 }
 
 export function unwrapMessageReactionRemoveEmojiEvent(x: MessageReactionRemoveEmojiEvent): RawMessageReactionRemoveEmojiEvent {
 	return {
-		...x,
-		channel_id: x.channelId,
-		guild_id: x.guildId && x.guildId,
-		message_id: x.messageId,
+		...toApiCasing(x),
 		emoji: unwrapEmojiPartial(x.emoji),
 	};
 }
 
 export function wrapMessageReactionRemoveEmojiEventPartial(x: Partial<RawMessageReactionRemoveEmojiEvent>): Partial<MessageReactionRemoveEmojiEvent> {
 	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-		messageId: x.message_id && x.message_id,
+		...fromApiCasing(x),
 		emoji: x.emoji && wrapEmojiPartial(x.emoji),
 	};
 }
 
 export function unwrapMessageReactionRemoveEmojiEventPartial(x: Partial<MessageReactionRemoveEmojiEvent>): Partial<RawMessageReactionRemoveEmojiEvent> {
 	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-		guild_id: x.guildId && x.guildId,
-		message_id: x.messageId && x.messageId,
+		...toApiCasing(x),
 		emoji: x.emoji && unwrapEmojiPartial(x.emoji),
 	};
 }

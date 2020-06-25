@@ -1,4 +1,5 @@
 import { RawCreateChannelInvitePayload } from '../raw/RawCreateChannelInvitePayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/channel#create-channel-invite-json-params
@@ -31,25 +32,9 @@ export interface CreateChannelInvitePayload {
 }
 
 
-export function wrapCreateChannelInvitePayload(x: RawCreateChannelInvitePayload): CreateChannelInvitePayload {
-	return {
-		...x,
-		maxAge: x.max_age && x.max_age,
-		maxUses: x.max_uses && x.max_uses,
-		targetUser: x.target_user && x.target_user,
-		targetUserType: x.target_user_type && x.target_user_type,
-	};
-}
+export const wrapCreateChannelInvitePayload = fromApiCasing as (x: RawCreateChannelInvitePayload) => CreateChannelInvitePayload;
 
-export function unwrapCreateChannelInvitePayload(x: CreateChannelInvitePayload): RawCreateChannelInvitePayload {
-	return {
-		...x,
-		max_age: x.maxAge && x.maxAge,
-		max_uses: x.maxUses && x.maxUses,
-		target_user: x.targetUser && x.targetUser,
-		target_user_type: x.targetUserType && x.targetUserType,
-	};
-}
+export const unwrapCreateChannelInvitePayload = toApiCasing as (x: CreateChannelInvitePayload) => RawCreateChannelInvitePayload;
 
 export const wrapCreateChannelInvitePayloadPartial = wrapCreateChannelInvitePayload as (x: Partial<RawCreateChannelInvitePayload>) => Partial<CreateChannelInvitePayload>;
 

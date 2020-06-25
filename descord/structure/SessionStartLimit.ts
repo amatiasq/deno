@@ -1,4 +1,5 @@
 import { RawSessionStartLimit } from '../raw/RawSessionStartLimit.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 
 export interface SessionStartLimit {
@@ -11,30 +12,10 @@ export interface SessionStartLimit {
 }
 
 
-export function wrapSessionStartLimit(x: RawSessionStartLimit): SessionStartLimit {
-	return {
-		...x,
-		resetAfter: x.reset_after,
-	};
-}
+export const wrapSessionStartLimit = fromApiCasing as (x: RawSessionStartLimit) => SessionStartLimit;
 
-export function unwrapSessionStartLimit(x: SessionStartLimit): RawSessionStartLimit {
-	return {
-		...x,
-		reset_after: x.resetAfter,
-	};
-}
+export const unwrapSessionStartLimit = toApiCasing as (x: SessionStartLimit) => RawSessionStartLimit;
 
-export function wrapSessionStartLimitPartial(x: Partial<RawSessionStartLimit>): Partial<SessionStartLimit> {
-	return {
-		...x,
-		resetAfter: x.reset_after && x.reset_after,
-	};
-}
+export const wrapSessionStartLimitPartial = wrapSessionStartLimit as (x: Partial<RawSessionStartLimit>) => Partial<SessionStartLimit>;
 
-export function unwrapSessionStartLimitPartial(x: Partial<SessionStartLimit>): Partial<RawSessionStartLimit> {
-	return {
-		...x,
-		reset_after: x.resetAfter && x.resetAfter,
-	};
-}
+export const unwrapSessionStartLimitPartial = unwrapSessionStartLimit as (x: Partial<SessionStartLimit>) => Partial<RawSessionStartLimit>;

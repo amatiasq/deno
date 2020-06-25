@@ -1,4 +1,5 @@
 import { RawGetInviteParams } from '../raw/RawGetInviteParams.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 
 // https://discord.com/developers/docs/resources/invite#get-invite-get-invite-url-parameters
 
@@ -8,19 +9,9 @@ export interface GetInviteParams {
 }
 
 
-export function wrapGetInviteParams(x: RawGetInviteParams): GetInviteParams {
-	return {
-		...x,
-		withCounts: x.with_counts && x.with_counts,
-	};
-}
+export const wrapGetInviteParams = fromApiCasing as (x: RawGetInviteParams) => GetInviteParams;
 
-export function unwrapGetInviteParams(x: GetInviteParams): RawGetInviteParams {
-	return {
-		...x,
-		with_counts: x.withCounts && x.withCounts,
-	};
-}
+export const unwrapGetInviteParams = toApiCasing as (x: GetInviteParams) => RawGetInviteParams;
 
 export const wrapGetInviteParamsPartial = wrapGetInviteParams as (x: Partial<RawGetInviteParams>) => Partial<GetInviteParams>;
 

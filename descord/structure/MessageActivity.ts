@@ -1,4 +1,5 @@
 import { RawMessageActivity } from '../raw/RawMessageActivity.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { MessageActivityType } from '../enum/MessageActivityType.ts';
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-activity-structure
@@ -11,19 +12,9 @@ export interface MessageActivity {
 }
 
 
-export function wrapMessageActivity(x: RawMessageActivity): MessageActivity {
-	return {
-		...x,
-		partyId: x.party_id && x.party_id,
-	};
-}
+export const wrapMessageActivity = fromApiCasing as (x: RawMessageActivity) => MessageActivity;
 
-export function unwrapMessageActivity(x: MessageActivity): RawMessageActivity {
-	return {
-		...x,
-		party_id: x.partyId && x.partyId,
-	};
-}
+export const unwrapMessageActivity = toApiCasing as (x: MessageActivity) => RawMessageActivity;
 
 export const wrapMessageActivityPartial = wrapMessageActivity as (x: Partial<RawMessageActivity>) => Partial<MessageActivity>;
 

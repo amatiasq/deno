@@ -1,4 +1,5 @@
 import { RawEmoji } from '../raw/RawEmoji.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { EmojiId, RoleId } from '../internals/type-aliases.ts';
 import { User, wrapUser, unwrapUser } from './User.ts';
 
@@ -26,17 +27,15 @@ export interface Emoji {
 
 export function wrapEmoji(x: RawEmoji): Emoji {
 	return {
-		...x,
+		...fromApiCasing(x),
 		user: x.user && wrapUser(x.user),
-		requireColons: x.require_colons && x.require_colons,
 	};
 }
 
 export function unwrapEmoji(x: Emoji): RawEmoji {
 	return {
-		...x,
+		...toApiCasing(x),
 		user: x.user && unwrapUser(x.user),
-		require_colons: x.requireColons && x.requireColons,
 	};
 }
 

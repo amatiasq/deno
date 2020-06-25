@@ -1,4 +1,5 @@
 import { RawInviteCreateEvent } from '../raw/RawInviteCreateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	ChannelId,
 	GuildId,
@@ -36,56 +37,36 @@ export interface InviteCreateEvent {
 
 export function wrapInviteCreateEvent(x: RawInviteCreateEvent): InviteCreateEvent {
 	return {
-		...x,
-		channelId: x.channel_id,
+		...fromApiCasing(x),
 		createdAt: parseISO8601Timestamp(x.created_at),
-		guildId: x.guild_id && x.guild_id,
 		inviter: x.inviter && wrapUser(x.inviter),
-		maxAge: x.max_age,
-		maxUses: x.max_uses,
 		targetUser: x.target_user && wrapUserPartial(x.target_user),
-		targetUserType: x.target_user_type && x.target_user_type,
 	};
 }
 
 export function unwrapInviteCreateEvent(x: InviteCreateEvent): RawInviteCreateEvent {
 	return {
-		...x,
-		channel_id: x.channelId,
+		...toApiCasing(x),
 		created_at: unparseISO8601Timestamp(x.createdAt),
-		guild_id: x.guildId && x.guildId,
 		inviter: x.inviter && unwrapUser(x.inviter),
-		max_age: x.maxAge,
-		max_uses: x.maxUses,
 		target_user: x.targetUser && unwrapUserPartial(x.targetUser),
-		target_user_type: x.targetUserType && x.targetUserType,
 	};
 }
 
 export function wrapInviteCreateEventPartial(x: Partial<RawInviteCreateEvent>): Partial<InviteCreateEvent> {
 	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
+		...fromApiCasing(x),
 		createdAt: x.created_at && parseISO8601Timestamp(x.created_at),
-		guildId: x.guild_id && x.guild_id,
 		inviter: x.inviter && wrapUser(x.inviter),
-		maxAge: x.max_age && x.max_age,
-		maxUses: x.max_uses && x.max_uses,
 		targetUser: x.target_user && wrapUserPartial(x.target_user),
-		targetUserType: x.target_user_type && x.target_user_type,
 	};
 }
 
 export function unwrapInviteCreateEventPartial(x: Partial<InviteCreateEvent>): Partial<RawInviteCreateEvent> {
 	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
+		...toApiCasing(x),
 		created_at: x.createdAt && unparseISO8601Timestamp(x.createdAt),
-		guild_id: x.guildId && x.guildId,
 		inviter: x.inviter && unwrapUser(x.inviter),
-		max_age: x.maxAge && x.maxAge,
-		max_uses: x.maxUses && x.maxUses,
 		target_user: x.targetUser && unwrapUserPartial(x.targetUser),
-		target_user_type: x.targetUserType && x.targetUserType,
 	};
 }

@@ -1,4 +1,5 @@
 import { RawAuditLog } from '../raw/RawAuditLog.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { Webhook, wrapWebhook, unwrapWebhook } from './Webhook.ts';
 import { User, wrapUser, unwrapUser } from './User.ts';
 import { AuditLogEntry, wrapAuditLogEntry, unwrapAuditLogEntry } from './AuditLogEntry.ts';
@@ -20,7 +21,7 @@ export interface AuditLog {
 
 export function wrapAuditLog(x: RawAuditLog): AuditLog {
 	return {
-		...x,
+		...fromApiCasing(x),
 		webhooks: x.webhooks.map(wrapWebhook),
 		users: x.users.map(wrapUser),
 		auditLogEntries: x.audit_log_entries.map(wrapAuditLogEntry),
@@ -30,7 +31,7 @@ export function wrapAuditLog(x: RawAuditLog): AuditLog {
 
 export function unwrapAuditLog(x: AuditLog): RawAuditLog {
 	return {
-		...x,
+		...toApiCasing(x),
 		webhooks: x.webhooks.map(unwrapWebhook),
 		users: x.users.map(unwrapUser),
 		audit_log_entries: x.auditLogEntries.map(unwrapAuditLogEntry),
@@ -40,7 +41,7 @@ export function unwrapAuditLog(x: AuditLog): RawAuditLog {
 
 export function wrapAuditLogPartial(x: Partial<RawAuditLog>): Partial<AuditLog> {
 	return {
-		...x,
+		...fromApiCasing(x),
 		webhooks: x.webhooks && x.webhooks.map(wrapWebhook),
 		users: x.users && x.users.map(wrapUser),
 		auditLogEntries: x.audit_log_entries && x.audit_log_entries.map(wrapAuditLogEntry),
@@ -50,7 +51,7 @@ export function wrapAuditLogPartial(x: Partial<RawAuditLog>): Partial<AuditLog> 
 
 export function unwrapAuditLogPartial(x: Partial<AuditLog>): Partial<RawAuditLog> {
 	return {
-		...x,
+		...toApiCasing(x),
 		webhooks: x.webhooks && x.webhooks.map(unwrapWebhook),
 		users: x.users && x.users.map(unwrapUser),
 		audit_log_entries: x.auditLogEntries && x.auditLogEntries.map(unwrapAuditLogEntry),

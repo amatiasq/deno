@@ -1,4 +1,5 @@
 import { RawMessageApplication } from '../raw/RawMessageApplication.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ApplicationId } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-application-structure
@@ -17,19 +18,9 @@ export interface MessageApplication {
 }
 
 
-export function wrapMessageApplication(x: RawMessageApplication): MessageApplication {
-	return {
-		...x,
-		coverImage: x.cover_image && x.cover_image,
-	};
-}
+export const wrapMessageApplication = fromApiCasing as (x: RawMessageApplication) => MessageApplication;
 
-export function unwrapMessageApplication(x: MessageApplication): RawMessageApplication {
-	return {
-		...x,
-		cover_image: x.coverImage && x.coverImage,
-	};
-}
+export const unwrapMessageApplication = toApiCasing as (x: MessageApplication) => RawMessageApplication;
 
 export const wrapMessageApplicationPartial = wrapMessageApplication as (x: Partial<RawMessageApplication>) => Partial<MessageApplication>;
 

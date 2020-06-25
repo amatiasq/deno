@@ -1,4 +1,5 @@
 import { RawGuildRoleDeleteEvent } from '../raw/RawGuildRoleDeleteEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId, RoleId } from '../internals/type-aliases.ts';
 
 export interface GuildRoleDeleteEvent {
@@ -9,34 +10,10 @@ export interface GuildRoleDeleteEvent {
 }
 
 
-export function wrapGuildRoleDeleteEvent(x: RawGuildRoleDeleteEvent): GuildRoleDeleteEvent {
-	return {
-		...x,
-		guildId: x.guild_id,
-		roleId: x.role_id,
-	};
-}
+export const wrapGuildRoleDeleteEvent = fromApiCasing as (x: RawGuildRoleDeleteEvent) => GuildRoleDeleteEvent;
 
-export function unwrapGuildRoleDeleteEvent(x: GuildRoleDeleteEvent): RawGuildRoleDeleteEvent {
-	return {
-		...x,
-		guild_id: x.guildId,
-		role_id: x.roleId,
-	};
-}
+export const unwrapGuildRoleDeleteEvent = toApiCasing as (x: GuildRoleDeleteEvent) => RawGuildRoleDeleteEvent;
 
-export function wrapGuildRoleDeleteEventPartial(x: Partial<RawGuildRoleDeleteEvent>): Partial<GuildRoleDeleteEvent> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		roleId: x.role_id && x.role_id,
-	};
-}
+export const wrapGuildRoleDeleteEventPartial = wrapGuildRoleDeleteEvent as (x: Partial<RawGuildRoleDeleteEvent>) => Partial<GuildRoleDeleteEvent>;
 
-export function unwrapGuildRoleDeleteEventPartial(x: Partial<GuildRoleDeleteEvent>): Partial<RawGuildRoleDeleteEvent> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		role_id: x.roleId && x.roleId,
-	};
-}
+export const unwrapGuildRoleDeleteEventPartial = unwrapGuildRoleDeleteEvent as (x: Partial<GuildRoleDeleteEvent>) => Partial<RawGuildRoleDeleteEvent>;

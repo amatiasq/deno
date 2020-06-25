@@ -1,4 +1,5 @@
 import { RawInvite } from '../raw/RawInvite.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { InviteCode, integer } from '../internals/type-aliases.ts';
 import { TargetUserType } from '../enum/TargetUserType.ts';
 import { Guild, wrapGuild, wrapGuildPartial, unwrapGuild, unwrapGuildPartial } from './Guild.ts';
@@ -29,52 +30,40 @@ export interface Invite {
 
 export function wrapInvite(x: RawInvite): Invite {
 	return {
-		...x,
+		...fromApiCasing(x),
 		guild: x.guild && wrapGuildPartial(x.guild),
 		channel: wrapChannelPartial(x.channel),
 		inviter: x.inviter && wrapUser(x.inviter),
 		targetUser: x.target_user && wrapUserPartial(x.target_user),
-		targetUserType: x.target_user_type && x.target_user_type,
-		approximatePresenceCount: x.approximate_presence_count && x.approximate_presence_count,
-		approximateMemberCount: x.approximate_member_count && x.approximate_member_count,
 	};
 }
 
 export function unwrapInvite(x: Invite): RawInvite {
 	return {
-		...x,
+		...toApiCasing(x),
 		guild: x.guild && unwrapGuildPartial(x.guild),
 		channel: unwrapChannelPartial(x.channel),
 		inviter: x.inviter && unwrapUser(x.inviter),
 		target_user: x.targetUser && unwrapUserPartial(x.targetUser),
-		target_user_type: x.targetUserType && x.targetUserType,
-		approximate_presence_count: x.approximatePresenceCount && x.approximatePresenceCount,
-		approximate_member_count: x.approximateMemberCount && x.approximateMemberCount,
 	};
 }
 
 export function wrapInvitePartial(x: Partial<RawInvite>): Partial<Invite> {
 	return {
-		...x,
+		...fromApiCasing(x),
 		guild: x.guild && wrapGuildPartial(x.guild),
 		channel: x.channel && wrapChannelPartial(x.channel),
 		inviter: x.inviter && wrapUser(x.inviter),
 		targetUser: x.target_user && wrapUserPartial(x.target_user),
-		targetUserType: x.target_user_type && x.target_user_type,
-		approximatePresenceCount: x.approximate_presence_count && x.approximate_presence_count,
-		approximateMemberCount: x.approximate_member_count && x.approximate_member_count,
 	};
 }
 
 export function unwrapInvitePartial(x: Partial<Invite>): Partial<RawInvite> {
 	return {
-		...x,
+		...toApiCasing(x),
 		guild: x.guild && unwrapGuildPartial(x.guild),
 		channel: x.channel && unwrapChannelPartial(x.channel),
 		inviter: x.inviter && unwrapUser(x.inviter),
 		target_user: x.targetUser && unwrapUserPartial(x.targetUser),
-		target_user_type: x.targetUserType && x.targetUserType,
-		approximate_presence_count: x.approximatePresenceCount && x.approximatePresenceCount,
-		approximate_member_count: x.approximateMemberCount && x.approximateMemberCount,
 	};
 }

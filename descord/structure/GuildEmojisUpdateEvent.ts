@@ -1,4 +1,5 @@
 import { RawGuildEmojisUpdateEvent } from '../raw/RawGuildEmojisUpdateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId } from '../internals/type-aliases.ts';
 
 export interface GuildEmojisUpdateEvent {
@@ -9,30 +10,10 @@ export interface GuildEmojisUpdateEvent {
 }
 
 
-export function wrapGuildEmojisUpdateEvent(x: RawGuildEmojisUpdateEvent): GuildEmojisUpdateEvent {
-	return {
-		...x,
-		guildId: x.guild_id,
-	};
-}
+export const wrapGuildEmojisUpdateEvent = fromApiCasing as (x: RawGuildEmojisUpdateEvent) => GuildEmojisUpdateEvent;
 
-export function unwrapGuildEmojisUpdateEvent(x: GuildEmojisUpdateEvent): RawGuildEmojisUpdateEvent {
-	return {
-		...x,
-		guild_id: x.guildId,
-	};
-}
+export const unwrapGuildEmojisUpdateEvent = toApiCasing as (x: GuildEmojisUpdateEvent) => RawGuildEmojisUpdateEvent;
 
-export function wrapGuildEmojisUpdateEventPartial(x: Partial<RawGuildEmojisUpdateEvent>): Partial<GuildEmojisUpdateEvent> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapGuildEmojisUpdateEventPartial = wrapGuildEmojisUpdateEvent as (x: Partial<RawGuildEmojisUpdateEvent>) => Partial<GuildEmojisUpdateEvent>;
 
-export function unwrapGuildEmojisUpdateEventPartial(x: Partial<GuildEmojisUpdateEvent>): Partial<RawGuildEmojisUpdateEvent> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapGuildEmojisUpdateEventPartial = unwrapGuildEmojisUpdateEvent as (x: Partial<GuildEmojisUpdateEvent>) => Partial<RawGuildEmojisUpdateEvent>;

@@ -1,4 +1,5 @@
 import { RawWebhookUpdateEvent } from '../raw/RawWebhookUpdateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, GuildId } from '../internals/type-aliases.ts';
 
 export interface WebhookUpdateEvent {
@@ -9,34 +10,10 @@ export interface WebhookUpdateEvent {
 }
 
 
-export function wrapWebhookUpdateEvent(x: RawWebhookUpdateEvent): WebhookUpdateEvent {
-	return {
-		...x,
-		guildId: x.guild_id,
-		channelId: x.channel_id,
-	};
-}
+export const wrapWebhookUpdateEvent = fromApiCasing as (x: RawWebhookUpdateEvent) => WebhookUpdateEvent;
 
-export function unwrapWebhookUpdateEvent(x: WebhookUpdateEvent): RawWebhookUpdateEvent {
-	return {
-		...x,
-		guild_id: x.guildId,
-		channel_id: x.channelId,
-	};
-}
+export const unwrapWebhookUpdateEvent = toApiCasing as (x: WebhookUpdateEvent) => RawWebhookUpdateEvent;
 
-export function wrapWebhookUpdateEventPartial(x: Partial<RawWebhookUpdateEvent>): Partial<WebhookUpdateEvent> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id && x.channel_id,
-	};
-}
+export const wrapWebhookUpdateEventPartial = wrapWebhookUpdateEvent as (x: Partial<RawWebhookUpdateEvent>) => Partial<WebhookUpdateEvent>;
 
-export function unwrapWebhookUpdateEventPartial(x: Partial<WebhookUpdateEvent>): Partial<RawWebhookUpdateEvent> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId && x.channelId,
-	};
-}
+export const unwrapWebhookUpdateEventPartial = unwrapWebhookUpdateEvent as (x: Partial<WebhookUpdateEvent>) => Partial<RawWebhookUpdateEvent>;

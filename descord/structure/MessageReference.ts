@@ -1,4 +1,5 @@
 import { RawMessageReference } from '../raw/RawMessageReference.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { MessageId, ChannelId, GuildId } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-reference-structure
@@ -13,38 +14,10 @@ export interface MessageReference {
 }
 
 
-export function wrapMessageReference(x: RawMessageReference): MessageReference {
-	return {
-		...x,
-		messageId: x.message_id && x.message_id,
-		channelId: x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapMessageReference = fromApiCasing as (x: RawMessageReference) => MessageReference;
 
-export function unwrapMessageReference(x: MessageReference): RawMessageReference {
-	return {
-		...x,
-		message_id: x.messageId && x.messageId,
-		channel_id: x.channelId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapMessageReference = toApiCasing as (x: MessageReference) => RawMessageReference;
 
-export function wrapMessageReferencePartial(x: Partial<RawMessageReference>): Partial<MessageReference> {
-	return {
-		...x,
-		messageId: x.message_id && x.message_id,
-		channelId: x.channel_id && x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapMessageReferencePartial = wrapMessageReference as (x: Partial<RawMessageReference>) => Partial<MessageReference>;
 
-export function unwrapMessageReferencePartial(x: Partial<MessageReference>): Partial<RawMessageReference> {
-	return {
-		...x,
-		message_id: x.messageId && x.messageId,
-		channel_id: x.channelId && x.channelId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapMessageReferencePartial = unwrapMessageReference as (x: Partial<MessageReference>) => Partial<RawMessageReference>;

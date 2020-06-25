@@ -1,4 +1,5 @@
 import { RawMessageReactionAddEvent } from '../raw/RawMessageReactionAddEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	ChannelId,
 	GuildId,
@@ -26,11 +27,7 @@ export interface MessageReactionAddEvent {
 
 export function wrapMessageReactionAddEvent(x: RawMessageReactionAddEvent): MessageReactionAddEvent {
 	return {
-		...x,
-		userId: x.user_id,
-		channelId: x.channel_id,
-		messageId: x.message_id,
-		guildId: x.guild_id && x.guild_id,
+		...fromApiCasing(x),
 		member: x.member && wrapGuildMember(x.member),
 		emoji: wrapEmojiPartial(x.emoji),
 	};
@@ -38,11 +35,7 @@ export function wrapMessageReactionAddEvent(x: RawMessageReactionAddEvent): Mess
 
 export function unwrapMessageReactionAddEvent(x: MessageReactionAddEvent): RawMessageReactionAddEvent {
 	return {
-		...x,
-		user_id: x.userId,
-		channel_id: x.channelId,
-		message_id: x.messageId,
-		guild_id: x.guildId && x.guildId,
+		...toApiCasing(x),
 		member: x.member && unwrapGuildMember(x.member),
 		emoji: unwrapEmojiPartial(x.emoji),
 	};
@@ -50,11 +43,7 @@ export function unwrapMessageReactionAddEvent(x: MessageReactionAddEvent): RawMe
 
 export function wrapMessageReactionAddEventPartial(x: Partial<RawMessageReactionAddEvent>): Partial<MessageReactionAddEvent> {
 	return {
-		...x,
-		userId: x.user_id && x.user_id,
-		channelId: x.channel_id && x.channel_id,
-		messageId: x.message_id && x.message_id,
-		guildId: x.guild_id && x.guild_id,
+		...fromApiCasing(x),
 		member: x.member && wrapGuildMember(x.member),
 		emoji: x.emoji && wrapEmojiPartial(x.emoji),
 	};
@@ -62,11 +51,7 @@ export function wrapMessageReactionAddEventPartial(x: Partial<RawMessageReaction
 
 export function unwrapMessageReactionAddEventPartial(x: Partial<MessageReactionAddEvent>): Partial<RawMessageReactionAddEvent> {
 	return {
-		...x,
-		user_id: x.userId && x.userId,
-		channel_id: x.channelId && x.channelId,
-		message_id: x.messageId && x.messageId,
-		guild_id: x.guildId && x.guildId,
+		...toApiCasing(x),
 		member: x.member && unwrapGuildMember(x.member),
 		emoji: x.emoji && unwrapEmojiPartial(x.emoji),
 	};

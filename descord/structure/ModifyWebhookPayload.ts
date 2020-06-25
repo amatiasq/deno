@@ -1,4 +1,5 @@
 import { RawModifyWebhookPayload } from '../raw/RawModifyWebhookPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, ImageData } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/webhook#modify-webhook-json-params
@@ -13,30 +14,10 @@ export interface ModifyWebhookPayload {
 }
 
 
-export function wrapModifyWebhookPayload(x: RawModifyWebhookPayload): ModifyWebhookPayload {
-	return {
-		...x,
-		channelId: x.channel_id,
-	};
-}
+export const wrapModifyWebhookPayload = fromApiCasing as (x: RawModifyWebhookPayload) => ModifyWebhookPayload;
 
-export function unwrapModifyWebhookPayload(x: ModifyWebhookPayload): RawModifyWebhookPayload {
-	return {
-		...x,
-		channel_id: x.channelId,
-	};
-}
+export const unwrapModifyWebhookPayload = toApiCasing as (x: ModifyWebhookPayload) => RawModifyWebhookPayload;
 
-export function wrapModifyWebhookPayloadPartial(x: Partial<RawModifyWebhookPayload>): Partial<ModifyWebhookPayload> {
-	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-	};
-}
+export const wrapModifyWebhookPayloadPartial = wrapModifyWebhookPayload as (x: Partial<RawModifyWebhookPayload>) => Partial<ModifyWebhookPayload>;
 
-export function unwrapModifyWebhookPayloadPartial(x: Partial<ModifyWebhookPayload>): Partial<RawModifyWebhookPayload> {
-	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-	};
-}
+export const unwrapModifyWebhookPayloadPartial = unwrapModifyWebhookPayload as (x: Partial<ModifyWebhookPayload>) => Partial<RawModifyWebhookPayload>;

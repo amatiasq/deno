@@ -1,4 +1,5 @@
 import { RawGroupDmAddRecipientPayload } from '../raw/RawGroupDmAddRecipientPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 
 // https://discord.com/developers/docs/resources/channel#group-dm-add-recipient-json-params
 
@@ -10,30 +11,10 @@ export interface GroupDmAddRecipientPayload {
 }
 
 
-export function wrapGroupDmAddRecipientPayload(x: RawGroupDmAddRecipientPayload): GroupDmAddRecipientPayload {
-	return {
-		...x,
-		accessToken: x.access_token,
-	};
-}
+export const wrapGroupDmAddRecipientPayload = fromApiCasing as (x: RawGroupDmAddRecipientPayload) => GroupDmAddRecipientPayload;
 
-export function unwrapGroupDmAddRecipientPayload(x: GroupDmAddRecipientPayload): RawGroupDmAddRecipientPayload {
-	return {
-		...x,
-		access_token: x.accessToken,
-	};
-}
+export const unwrapGroupDmAddRecipientPayload = toApiCasing as (x: GroupDmAddRecipientPayload) => RawGroupDmAddRecipientPayload;
 
-export function wrapGroupDmAddRecipientPayloadPartial(x: Partial<RawGroupDmAddRecipientPayload>): Partial<GroupDmAddRecipientPayload> {
-	return {
-		...x,
-		accessToken: x.access_token && x.access_token,
-	};
-}
+export const wrapGroupDmAddRecipientPayloadPartial = wrapGroupDmAddRecipientPayload as (x: Partial<RawGroupDmAddRecipientPayload>) => Partial<GroupDmAddRecipientPayload>;
 
-export function unwrapGroupDmAddRecipientPayloadPartial(x: Partial<GroupDmAddRecipientPayload>): Partial<RawGroupDmAddRecipientPayload> {
-	return {
-		...x,
-		access_token: x.accessToken && x.accessToken,
-	};
-}
+export const unwrapGroupDmAddRecipientPayloadPartial = unwrapGroupDmAddRecipientPayload as (x: Partial<GroupDmAddRecipientPayload>) => Partial<RawGroupDmAddRecipientPayload>;

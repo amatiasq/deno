@@ -1,4 +1,5 @@
 import { RawGuildPruneCountParams } from '../raw/RawGuildPruneCountParams.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { RoleId, integer } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/guild#get-guild-prune-count-query-string-params
@@ -11,19 +12,9 @@ export interface GuildPruneCountParams {
 }
 
 
-export function wrapGuildPruneCountParams(x: RawGuildPruneCountParams): GuildPruneCountParams {
-	return {
-		...x,
-		includeRoles: x.include_roles && x.include_roles,
-	};
-}
+export const wrapGuildPruneCountParams = fromApiCasing as (x: RawGuildPruneCountParams) => GuildPruneCountParams;
 
-export function unwrapGuildPruneCountParams(x: GuildPruneCountParams): RawGuildPruneCountParams {
-	return {
-		...x,
-		include_roles: x.includeRoles && x.includeRoles,
-	};
-}
+export const unwrapGuildPruneCountParams = toApiCasing as (x: GuildPruneCountParams) => RawGuildPruneCountParams;
 
 export const wrapGuildPruneCountParamsPartial = wrapGuildPruneCountParams as (x: Partial<RawGuildPruneCountParams>) => Partial<GuildPruneCountParams>;
 

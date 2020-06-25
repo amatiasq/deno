@@ -1,4 +1,5 @@
 import { RawReadyEvent } from '../raw/RawReadyEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 import { UnavailableGuild, wrapUnavailableGuild, unwrapUnavailableGuild } from './UnavailableGuild.ts';
 import { User, wrapUser, unwrapUser } from './User.ts';
@@ -21,40 +22,32 @@ export interface ReadyEvent {
 
 export function wrapReadyEvent(x: RawReadyEvent): ReadyEvent {
 	return {
-		...x,
+		...fromApiCasing(x),
 		user: wrapUser(x.user),
-		privateChannels: x.private_channels,
 		guilds: x.guilds.map(wrapUnavailableGuild),
-		sessionId: x.session_id,
 	};
 }
 
 export function unwrapReadyEvent(x: ReadyEvent): RawReadyEvent {
 	return {
-		...x,
+		...toApiCasing(x),
 		user: unwrapUser(x.user),
-		private_channels: x.privateChannels,
 		guilds: x.guilds.map(unwrapUnavailableGuild),
-		session_id: x.sessionId,
 	};
 }
 
 export function wrapReadyEventPartial(x: Partial<RawReadyEvent>): Partial<ReadyEvent> {
 	return {
-		...x,
+		...fromApiCasing(x),
 		user: x.user && wrapUser(x.user),
-		privateChannels: x.private_channels && x.private_channels,
 		guilds: x.guilds && x.guilds.map(wrapUnavailableGuild),
-		sessionId: x.session_id && x.session_id,
 	};
 }
 
 export function unwrapReadyEventPartial(x: Partial<ReadyEvent>): Partial<RawReadyEvent> {
 	return {
-		...x,
+		...toApiCasing(x),
 		user: x.user && unwrapUser(x.user),
-		private_channels: x.privateChannels && x.privateChannels,
 		guilds: x.guilds && x.guilds.map(unwrapUnavailableGuild),
-		session_id: x.sessionId && x.sessionId,
 	};
 }

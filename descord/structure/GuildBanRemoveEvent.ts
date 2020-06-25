@@ -1,4 +1,5 @@
 import { RawGuildBanRemoveEvent } from '../raw/RawGuildBanRemoveEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId } from '../internals/type-aliases.ts';
 import { User, wrapUser, unwrapUser } from './User.ts';
 
@@ -12,32 +13,28 @@ export interface GuildBanRemoveEvent {
 
 export function wrapGuildBanRemoveEvent(x: RawGuildBanRemoveEvent): GuildBanRemoveEvent {
 	return {
-		...x,
-		guildId: x.guild_id,
+		...fromApiCasing(x),
 		user: wrapUser(x.user),
 	};
 }
 
 export function unwrapGuildBanRemoveEvent(x: GuildBanRemoveEvent): RawGuildBanRemoveEvent {
 	return {
-		...x,
-		guild_id: x.guildId,
+		...toApiCasing(x),
 		user: unwrapUser(x.user),
 	};
 }
 
 export function wrapGuildBanRemoveEventPartial(x: Partial<RawGuildBanRemoveEvent>): Partial<GuildBanRemoveEvent> {
 	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
+		...fromApiCasing(x),
 		user: x.user && wrapUser(x.user),
 	};
 }
 
 export function unwrapGuildBanRemoveEventPartial(x: Partial<GuildBanRemoveEvent>): Partial<RawGuildBanRemoveEvent> {
 	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
+		...toApiCasing(x),
 		user: x.user && unwrapUser(x.user),
 	};
 }

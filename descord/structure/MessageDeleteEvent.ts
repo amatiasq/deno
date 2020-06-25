@@ -1,4 +1,5 @@
 import { RawMessageDeleteEvent } from '../raw/RawMessageDeleteEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, GuildId, MessageId } from '../internals/type-aliases.ts';
 
 export interface MessageDeleteEvent {
@@ -11,34 +12,10 @@ export interface MessageDeleteEvent {
 }
 
 
-export function wrapMessageDeleteEvent(x: RawMessageDeleteEvent): MessageDeleteEvent {
-	return {
-		...x,
-		channelId: x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapMessageDeleteEvent = fromApiCasing as (x: RawMessageDeleteEvent) => MessageDeleteEvent;
 
-export function unwrapMessageDeleteEvent(x: MessageDeleteEvent): RawMessageDeleteEvent {
-	return {
-		...x,
-		channel_id: x.channelId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapMessageDeleteEvent = toApiCasing as (x: MessageDeleteEvent) => RawMessageDeleteEvent;
 
-export function wrapMessageDeleteEventPartial(x: Partial<RawMessageDeleteEvent>): Partial<MessageDeleteEvent> {
-	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapMessageDeleteEventPartial = wrapMessageDeleteEvent as (x: Partial<RawMessageDeleteEvent>) => Partial<MessageDeleteEvent>;
 
-export function unwrapMessageDeleteEventPartial(x: Partial<MessageDeleteEvent>): Partial<RawMessageDeleteEvent> {
-	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapMessageDeleteEventPartial = unwrapMessageDeleteEvent as (x: Partial<MessageDeleteEvent>) => Partial<RawMessageDeleteEvent>;

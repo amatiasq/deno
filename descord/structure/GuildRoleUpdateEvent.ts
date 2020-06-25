@@ -1,4 +1,5 @@
 import { RawGuildRoleUpdateEvent } from '../raw/RawGuildRoleUpdateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId } from '../internals/type-aliases.ts';
 import { Role, wrapRole, unwrapRole } from './Role.ts';
 
@@ -12,32 +13,28 @@ export interface GuildRoleUpdateEvent {
 
 export function wrapGuildRoleUpdateEvent(x: RawGuildRoleUpdateEvent): GuildRoleUpdateEvent {
 	return {
-		...x,
-		guildId: x.guild_id,
+		...fromApiCasing(x),
 		role: wrapRole(x.role),
 	};
 }
 
 export function unwrapGuildRoleUpdateEvent(x: GuildRoleUpdateEvent): RawGuildRoleUpdateEvent {
 	return {
-		...x,
-		guild_id: x.guildId,
+		...toApiCasing(x),
 		role: unwrapRole(x.role),
 	};
 }
 
 export function wrapGuildRoleUpdateEventPartial(x: Partial<RawGuildRoleUpdateEvent>): Partial<GuildRoleUpdateEvent> {
 	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
+		...fromApiCasing(x),
 		role: x.role && wrapRole(x.role),
 	};
 }
 
 export function unwrapGuildRoleUpdateEventPartial(x: Partial<GuildRoleUpdateEvent>): Partial<RawGuildRoleUpdateEvent> {
 	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
+		...toApiCasing(x),
 		role: x.role && unwrapRole(x.role),
 	};
 }

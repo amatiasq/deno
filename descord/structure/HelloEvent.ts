@@ -1,4 +1,5 @@
 import { RawHelloEvent } from '../raw/RawHelloEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 
 export interface HelloEvent {
@@ -7,30 +8,10 @@ export interface HelloEvent {
 }
 
 
-export function wrapHelloEvent(x: RawHelloEvent): HelloEvent {
-	return {
-		...x,
-		heartbeatInterval: x.heartbeat_interval,
-	};
-}
+export const wrapHelloEvent = fromApiCasing as (x: RawHelloEvent) => HelloEvent;
 
-export function unwrapHelloEvent(x: HelloEvent): RawHelloEvent {
-	return {
-		...x,
-		heartbeat_interval: x.heartbeatInterval,
-	};
-}
+export const unwrapHelloEvent = toApiCasing as (x: HelloEvent) => RawHelloEvent;
 
-export function wrapHelloEventPartial(x: Partial<RawHelloEvent>): Partial<HelloEvent> {
-	return {
-		...x,
-		heartbeatInterval: x.heartbeat_interval && x.heartbeat_interval,
-	};
-}
+export const wrapHelloEventPartial = wrapHelloEvent as (x: Partial<RawHelloEvent>) => Partial<HelloEvent>;
 
-export function unwrapHelloEventPartial(x: Partial<HelloEvent>): Partial<RawHelloEvent> {
-	return {
-		...x,
-		heartbeat_interval: x.heartbeatInterval && x.heartbeatInterval,
-	};
-}
+export const unwrapHelloEventPartial = unwrapHelloEvent as (x: Partial<HelloEvent>) => Partial<RawHelloEvent>;

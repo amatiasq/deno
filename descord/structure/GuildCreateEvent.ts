@@ -1,4 +1,5 @@
 import { RawGuildCreateEvent } from '../raw/RawGuildCreateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { parseISO8601Timestamp, unparseISO8601Timestamp, integer } from '../internals/type-aliases.ts';
 import { Channel, wrapChannel, unwrapChannel } from './Channel.ts';
 import { GuildMember, wrapGuildMember, unwrapGuildMember } from './GuildMember.ts';
@@ -30,7 +31,6 @@ export function wrapGuildCreateEvent(x: RawGuildCreateEvent): GuildCreateEvent {
 	return {
 		...wrapGuild(x),
 		joinedAt: x.joined_at && parseISO8601Timestamp(x.joined_at),
-		memberCount: x.member_count && x.member_count,
 		voiceStates: x.voice_states && x.voice_states.map(wrapVoiceState),
 		members: x.members && x.members.map(wrapGuildMember),
 		channels: x.channels && x.channels.map(wrapChannel),
@@ -42,7 +42,6 @@ export function unwrapGuildCreateEvent(x: GuildCreateEvent): RawGuildCreateEvent
 	return {
 		...unwrapGuild(x),
 		joined_at: x.joinedAt && unparseISO8601Timestamp(x.joinedAt),
-		member_count: x.memberCount && x.memberCount,
 		voice_states: x.voiceStates && x.voiceStates.map(unwrapVoiceState),
 		members: x.members && x.members.map(unwrapGuildMember),
 		channels: x.channels && x.channels.map(unwrapChannel),

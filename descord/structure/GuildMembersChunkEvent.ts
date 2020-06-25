@@ -1,4 +1,5 @@
 import { RawGuildMembersChunkEvent } from '../raw/RawGuildMembersChunkEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId, integer, UserId } from '../internals/type-aliases.ts';
 import { GuildMember, wrapGuildMember, unwrapGuildMember } from './GuildMember.ts';
 import { PresenceUpdateEvent, wrapPresenceUpdateEvent, unwrapPresenceUpdateEvent } from './PresenceUpdateEvent.ts';
@@ -23,48 +24,32 @@ export interface GuildMembersChunkEvent {
 
 export function wrapGuildMembersChunkEvent(x: RawGuildMembersChunkEvent): GuildMembersChunkEvent {
 	return {
-		...x,
-		guildId: x.guild_id,
+		...fromApiCasing(x),
 		members: x.members.map(wrapGuildMember),
-		chunkIndex: x.chunk_index,
-		chunkCount: x.chunk_count,
-		notFound: x.not_found && x.not_found,
 		presences: x.presences && x.presences.map(wrapPresenceUpdateEvent),
 	};
 }
 
 export function unwrapGuildMembersChunkEvent(x: GuildMembersChunkEvent): RawGuildMembersChunkEvent {
 	return {
-		...x,
-		guild_id: x.guildId,
+		...toApiCasing(x),
 		members: x.members.map(unwrapGuildMember),
-		chunk_index: x.chunkIndex,
-		chunk_count: x.chunkCount,
-		not_found: x.notFound && x.notFound,
 		presences: x.presences && x.presences.map(unwrapPresenceUpdateEvent),
 	};
 }
 
 export function wrapGuildMembersChunkEventPartial(x: Partial<RawGuildMembersChunkEvent>): Partial<GuildMembersChunkEvent> {
 	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
+		...fromApiCasing(x),
 		members: x.members && x.members.map(wrapGuildMember),
-		chunkIndex: x.chunk_index && x.chunk_index,
-		chunkCount: x.chunk_count && x.chunk_count,
-		notFound: x.not_found && x.not_found,
 		presences: x.presences && x.presences.map(wrapPresenceUpdateEvent),
 	};
 }
 
 export function unwrapGuildMembersChunkEventPartial(x: Partial<GuildMembersChunkEvent>): Partial<RawGuildMembersChunkEvent> {
 	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
+		...toApiCasing(x),
 		members: x.members && x.members.map(unwrapGuildMember),
-		chunk_index: x.chunkIndex && x.chunkIndex,
-		chunk_count: x.chunkCount && x.chunkCount,
-		not_found: x.notFound && x.notFound,
 		presences: x.presences && x.presences.map(unwrapPresenceUpdateEvent),
 	};
 }

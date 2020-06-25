@@ -1,4 +1,5 @@
 import { RawGuildIntegrationsUpdateEvent } from '../raw/RawGuildIntegrationsUpdateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId } from '../internals/type-aliases.ts';
 
 export interface GuildIntegrationsUpdateEvent {
@@ -7,30 +8,10 @@ export interface GuildIntegrationsUpdateEvent {
 }
 
 
-export function wrapGuildIntegrationsUpdateEvent(x: RawGuildIntegrationsUpdateEvent): GuildIntegrationsUpdateEvent {
-	return {
-		...x,
-		guildId: x.guild_id,
-	};
-}
+export const wrapGuildIntegrationsUpdateEvent = fromApiCasing as (x: RawGuildIntegrationsUpdateEvent) => GuildIntegrationsUpdateEvent;
 
-export function unwrapGuildIntegrationsUpdateEvent(x: GuildIntegrationsUpdateEvent): RawGuildIntegrationsUpdateEvent {
-	return {
-		...x,
-		guild_id: x.guildId,
-	};
-}
+export const unwrapGuildIntegrationsUpdateEvent = toApiCasing as (x: GuildIntegrationsUpdateEvent) => RawGuildIntegrationsUpdateEvent;
 
-export function wrapGuildIntegrationsUpdateEventPartial(x: Partial<RawGuildIntegrationsUpdateEvent>): Partial<GuildIntegrationsUpdateEvent> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapGuildIntegrationsUpdateEventPartial = wrapGuildIntegrationsUpdateEvent as (x: Partial<RawGuildIntegrationsUpdateEvent>) => Partial<GuildIntegrationsUpdateEvent>;
 
-export function unwrapGuildIntegrationsUpdateEventPartial(x: Partial<GuildIntegrationsUpdateEvent>): Partial<RawGuildIntegrationsUpdateEvent> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapGuildIntegrationsUpdateEventPartial = unwrapGuildIntegrationsUpdateEvent as (x: Partial<GuildIntegrationsUpdateEvent>) => Partial<RawGuildIntegrationsUpdateEvent>;

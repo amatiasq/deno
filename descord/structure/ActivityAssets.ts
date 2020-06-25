@@ -1,5 +1,5 @@
 import { RawActivityAssets } from '../raw/RawActivityAssets.ts';
-
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 
 export interface ActivityAssets {
 	/** the id for a large asset of the activity, usually a snowflake */
@@ -13,25 +13,9 @@ export interface ActivityAssets {
 }
 
 
-export function wrapActivityAssets(x: RawActivityAssets): ActivityAssets {
-	return {
-		...x,
-		largeImage: x.large_image && x.large_image,
-		largeText: x.large_text && x.large_text,
-		smallImage: x.small_image && x.small_image,
-		smallText: x.small_text && x.small_text,
-	};
-}
+export const wrapActivityAssets = fromApiCasing as (x: RawActivityAssets) => ActivityAssets;
 
-export function unwrapActivityAssets(x: ActivityAssets): RawActivityAssets {
-	return {
-		...x,
-		large_image: x.largeImage && x.largeImage,
-		large_text: x.largeText && x.largeText,
-		small_image: x.smallImage && x.smallImage,
-		small_text: x.smallText && x.smallText,
-	};
-}
+export const unwrapActivityAssets = toApiCasing as (x: ActivityAssets) => RawActivityAssets;
 
 export const wrapActivityAssetsPartial = wrapActivityAssets as (x: Partial<RawActivityAssets>) => Partial<ActivityAssets>;
 

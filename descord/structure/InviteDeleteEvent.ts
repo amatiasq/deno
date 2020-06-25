@@ -1,4 +1,5 @@
 import { RawInviteDeleteEvent } from '../raw/RawInviteDeleteEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, GuildId } from '../internals/type-aliases.ts';
 
 export interface InviteDeleteEvent {
@@ -11,34 +12,10 @@ export interface InviteDeleteEvent {
 }
 
 
-export function wrapInviteDeleteEvent(x: RawInviteDeleteEvent): InviteDeleteEvent {
-	return {
-		...x,
-		channelId: x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapInviteDeleteEvent = fromApiCasing as (x: RawInviteDeleteEvent) => InviteDeleteEvent;
 
-export function unwrapInviteDeleteEvent(x: InviteDeleteEvent): RawInviteDeleteEvent {
-	return {
-		...x,
-		channel_id: x.channelId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapInviteDeleteEvent = toApiCasing as (x: InviteDeleteEvent) => RawInviteDeleteEvent;
 
-export function wrapInviteDeleteEventPartial(x: Partial<RawInviteDeleteEvent>): Partial<InviteDeleteEvent> {
-	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapInviteDeleteEventPartial = wrapInviteDeleteEvent as (x: Partial<RawInviteDeleteEvent>) => Partial<InviteDeleteEvent>;
 
-export function unwrapInviteDeleteEventPartial(x: Partial<InviteDeleteEvent>): Partial<RawInviteDeleteEvent> {
-	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapInviteDeleteEventPartial = unwrapInviteDeleteEvent as (x: Partial<InviteDeleteEvent>) => Partial<RawInviteDeleteEvent>;

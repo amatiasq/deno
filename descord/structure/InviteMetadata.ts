@@ -1,4 +1,5 @@
 import { RawInviteMetadata } from '../raw/RawInviteMetadata.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer, parseISO8601Timestamp, unparseISO8601Timestamp } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/invite#invite-metadata-object-invite-metadata-structure
@@ -19,36 +20,28 @@ export interface InviteMetadata {
 
 export function wrapInviteMetadata(x: RawInviteMetadata): InviteMetadata {
 	return {
-		...x,
-		maxUses: x.max_uses,
-		maxAge: x.max_age,
+		...fromApiCasing(x),
 		createdAt: parseISO8601Timestamp(x.created_at),
 	};
 }
 
 export function unwrapInviteMetadata(x: InviteMetadata): RawInviteMetadata {
 	return {
-		...x,
-		max_uses: x.maxUses,
-		max_age: x.maxAge,
+		...toApiCasing(x),
 		created_at: unparseISO8601Timestamp(x.createdAt),
 	};
 }
 
 export function wrapInviteMetadataPartial(x: Partial<RawInviteMetadata>): Partial<InviteMetadata> {
 	return {
-		...x,
-		maxUses: x.max_uses && x.max_uses,
-		maxAge: x.max_age && x.max_age,
+		...fromApiCasing(x),
 		createdAt: x.created_at && parseISO8601Timestamp(x.created_at),
 	};
 }
 
 export function unwrapInviteMetadataPartial(x: Partial<InviteMetadata>): Partial<RawInviteMetadata> {
 	return {
-		...x,
-		max_uses: x.maxUses && x.maxUses,
-		max_age: x.maxAge && x.maxAge,
+		...toApiCasing(x),
 		created_at: x.createdAt && unparseISO8601Timestamp(x.createdAt),
 	};
 }

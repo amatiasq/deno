@@ -1,4 +1,5 @@
 import { RawOptionalAuditEntryInfo } from '../raw/RawOptionalAuditEntryInfo.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	ChannelId,
 	MessageId,
@@ -28,46 +29,10 @@ export interface OptionalAuditEntryInfo {
 }
 
 
-export function wrapOptionalAuditEntryInfo(x: RawOptionalAuditEntryInfo): OptionalAuditEntryInfo {
-	return {
-		...x,
-		deleteMemberDays: x.delete_member_days,
-		membersRemoved: x.members_removed,
-		channelId: x.channel_id,
-		messageId: x.message_id,
-		roleName: x.role_name,
-	};
-}
+export const wrapOptionalAuditEntryInfo = fromApiCasing as (x: RawOptionalAuditEntryInfo) => OptionalAuditEntryInfo;
 
-export function unwrapOptionalAuditEntryInfo(x: OptionalAuditEntryInfo): RawOptionalAuditEntryInfo {
-	return {
-		...x,
-		delete_member_days: x.deleteMemberDays,
-		members_removed: x.membersRemoved,
-		channel_id: x.channelId,
-		message_id: x.messageId,
-		role_name: x.roleName,
-	};
-}
+export const unwrapOptionalAuditEntryInfo = toApiCasing as (x: OptionalAuditEntryInfo) => RawOptionalAuditEntryInfo;
 
-export function wrapOptionalAuditEntryInfoPartial(x: Partial<RawOptionalAuditEntryInfo>): Partial<OptionalAuditEntryInfo> {
-	return {
-		...x,
-		deleteMemberDays: x.delete_member_days && x.delete_member_days,
-		membersRemoved: x.members_removed && x.members_removed,
-		channelId: x.channel_id && x.channel_id,
-		messageId: x.message_id && x.message_id,
-		roleName: x.role_name && x.role_name,
-	};
-}
+export const wrapOptionalAuditEntryInfoPartial = wrapOptionalAuditEntryInfo as (x: Partial<RawOptionalAuditEntryInfo>) => Partial<OptionalAuditEntryInfo>;
 
-export function unwrapOptionalAuditEntryInfoPartial(x: Partial<OptionalAuditEntryInfo>): Partial<RawOptionalAuditEntryInfo> {
-	return {
-		...x,
-		delete_member_days: x.deleteMemberDays && x.deleteMemberDays,
-		members_removed: x.membersRemoved && x.membersRemoved,
-		channel_id: x.channelId && x.channelId,
-		message_id: x.messageId && x.messageId,
-		role_name: x.roleName && x.roleName,
-	};
-}
+export const unwrapOptionalAuditEntryInfoPartial = unwrapOptionalAuditEntryInfo as (x: Partial<OptionalAuditEntryInfo>) => Partial<RawOptionalAuditEntryInfo>;

@@ -1,4 +1,5 @@
 import { RawChannelPinsUpdateEvent } from '../raw/RawChannelPinsUpdateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	ChannelId,
 	GuildId,
@@ -17,36 +18,18 @@ export interface ChannelPinsUpdateEvent {
 
 export function wrapChannelPinsUpdateEvent(x: RawChannelPinsUpdateEvent): ChannelPinsUpdateEvent {
 	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id,
+		...fromApiCasing(x),
 		lastPinTimestamp: x.last_pin_timestamp && parseISO8601Timestamp(x.last_pin_timestamp),
 	};
 }
 
 export function unwrapChannelPinsUpdateEvent(x: ChannelPinsUpdateEvent): RawChannelPinsUpdateEvent {
 	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId,
+		...toApiCasing(x),
 		last_pin_timestamp: x.lastPinTimestamp && unparseISO8601Timestamp(x.lastPinTimestamp),
 	};
 }
 
-export function wrapChannelPinsUpdateEventPartial(x: Partial<RawChannelPinsUpdateEvent>): Partial<ChannelPinsUpdateEvent> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id && x.channel_id,
-		lastPinTimestamp: x.last_pin_timestamp && parseISO8601Timestamp(x.last_pin_timestamp),
-	};
-}
+export const wrapChannelPinsUpdateEventPartial = wrapChannelPinsUpdateEvent as (x: Partial<RawChannelPinsUpdateEvent>) => Partial<ChannelPinsUpdateEvent>;
 
-export function unwrapChannelPinsUpdateEventPartial(x: Partial<ChannelPinsUpdateEvent>): Partial<RawChannelPinsUpdateEvent> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId && x.channelId,
-		last_pin_timestamp: x.lastPinTimestamp && unparseISO8601Timestamp(x.lastPinTimestamp),
-	};
-}
+export const unwrapChannelPinsUpdateEventPartial = unwrapChannelPinsUpdateEvent as (x: Partial<ChannelPinsUpdateEvent>) => Partial<RawChannelPinsUpdateEvent>;

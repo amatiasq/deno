@@ -1,4 +1,5 @@
 import { RawUpdateVoiceStateCommand } from '../raw/RawUpdateVoiceStateCommand.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, GuildId } from '../internals/type-aliases.ts';
 
 export interface UpdateVoiceStateCommand {
@@ -13,42 +14,10 @@ export interface UpdateVoiceStateCommand {
 }
 
 
-export function wrapUpdateVoiceStateCommand(x: RawUpdateVoiceStateCommand): UpdateVoiceStateCommand {
-	return {
-		...x,
-		guildId: x.guild_id,
-		channelId: x.channel_id && x.channel_id,
-		selfMute: x.self_mute,
-		selfDeaf: x.self_deaf,
-	};
-}
+export const wrapUpdateVoiceStateCommand = fromApiCasing as (x: RawUpdateVoiceStateCommand) => UpdateVoiceStateCommand;
 
-export function unwrapUpdateVoiceStateCommand(x: UpdateVoiceStateCommand): RawUpdateVoiceStateCommand {
-	return {
-		...x,
-		guild_id: x.guildId,
-		channel_id: x.channelId && x.channelId,
-		self_mute: x.selfMute,
-		self_deaf: x.selfDeaf,
-	};
-}
+export const unwrapUpdateVoiceStateCommand = toApiCasing as (x: UpdateVoiceStateCommand) => RawUpdateVoiceStateCommand;
 
-export function wrapUpdateVoiceStateCommandPartial(x: Partial<RawUpdateVoiceStateCommand>): Partial<UpdateVoiceStateCommand> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id && x.channel_id,
-		selfMute: x.self_mute && x.self_mute,
-		selfDeaf: x.self_deaf && x.self_deaf,
-	};
-}
+export const wrapUpdateVoiceStateCommandPartial = wrapUpdateVoiceStateCommand as (x: Partial<RawUpdateVoiceStateCommand>) => Partial<UpdateVoiceStateCommand>;
 
-export function unwrapUpdateVoiceStateCommandPartial(x: Partial<UpdateVoiceStateCommand>): Partial<RawUpdateVoiceStateCommand> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId && x.channelId,
-		self_mute: x.selfMute && x.selfMute,
-		self_deaf: x.selfDeaf && x.selfDeaf,
-	};
-}
+export const unwrapUpdateVoiceStateCommandPartial = unwrapUpdateVoiceStateCommand as (x: Partial<UpdateVoiceStateCommand>) => Partial<RawUpdateVoiceStateCommand>;

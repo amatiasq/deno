@@ -1,4 +1,5 @@
 import { RawVoiceServerUpdateEvent } from '../raw/RawVoiceServerUpdateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId } from '../internals/type-aliases.ts';
 
 export interface VoiceServerUpdateEvent {
@@ -11,30 +12,10 @@ export interface VoiceServerUpdateEvent {
 }
 
 
-export function wrapVoiceServerUpdateEvent(x: RawVoiceServerUpdateEvent): VoiceServerUpdateEvent {
-	return {
-		...x,
-		guildId: x.guild_id,
-	};
-}
+export const wrapVoiceServerUpdateEvent = fromApiCasing as (x: RawVoiceServerUpdateEvent) => VoiceServerUpdateEvent;
 
-export function unwrapVoiceServerUpdateEvent(x: VoiceServerUpdateEvent): RawVoiceServerUpdateEvent {
-	return {
-		...x,
-		guild_id: x.guildId,
-	};
-}
+export const unwrapVoiceServerUpdateEvent = toApiCasing as (x: VoiceServerUpdateEvent) => RawVoiceServerUpdateEvent;
 
-export function wrapVoiceServerUpdateEventPartial(x: Partial<RawVoiceServerUpdateEvent>): Partial<VoiceServerUpdateEvent> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapVoiceServerUpdateEventPartial = wrapVoiceServerUpdateEvent as (x: Partial<RawVoiceServerUpdateEvent>) => Partial<VoiceServerUpdateEvent>;
 
-export function unwrapVoiceServerUpdateEventPartial(x: Partial<VoiceServerUpdateEvent>): Partial<RawVoiceServerUpdateEvent> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapVoiceServerUpdateEventPartial = unwrapVoiceServerUpdateEvent as (x: Partial<VoiceServerUpdateEvent>) => Partial<RawVoiceServerUpdateEvent>;

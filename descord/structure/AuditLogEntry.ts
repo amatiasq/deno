@@ -1,4 +1,5 @@
 import { RawAuditLogEntry } from '../raw/RawAuditLogEntry.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { AuditLogEvent } from '../enum/AuditLogEvent.ts';
 import { AuditLogEntryId, UserId } from '../internals/type-aliases.ts';
 import { OptionalAuditEntryInfo, wrapOptionalAuditEntryInfo, unwrapOptionalAuditEntryInfo } from './OptionalAuditEntryInfo.ts';
@@ -26,44 +27,20 @@ export interface AuditLogEntry {
 
 export function wrapAuditLogEntry(x: RawAuditLogEntry): AuditLogEntry {
 	return {
-		...x,
-		targetId: x.target_id && x.target_id,
+		...fromApiCasing(x),
 		changes: x.changes && x.changes.map(wrapAuditLogChange),
-		userId: x.user_id,
-		actionType: x.action_type,
 		options: x.options && wrapOptionalAuditEntryInfo(x.options),
 	};
 }
 
 export function unwrapAuditLogEntry(x: AuditLogEntry): RawAuditLogEntry {
 	return {
-		...x,
-		target_id: x.targetId && x.targetId,
+		...toApiCasing(x),
 		changes: x.changes && x.changes.map(unwrapAuditLogChange),
-		user_id: x.userId,
-		action_type: x.actionType,
 		options: x.options && unwrapOptionalAuditEntryInfo(x.options),
 	};
 }
 
-export function wrapAuditLogEntryPartial(x: Partial<RawAuditLogEntry>): Partial<AuditLogEntry> {
-	return {
-		...x,
-		targetId: x.target_id && x.target_id,
-		changes: x.changes && x.changes.map(wrapAuditLogChange),
-		userId: x.user_id && x.user_id,
-		actionType: x.action_type && x.action_type,
-		options: x.options && wrapOptionalAuditEntryInfo(x.options),
-	};
-}
+export const wrapAuditLogEntryPartial = wrapAuditLogEntry as (x: Partial<RawAuditLogEntry>) => Partial<AuditLogEntry>;
 
-export function unwrapAuditLogEntryPartial(x: Partial<AuditLogEntry>): Partial<RawAuditLogEntry> {
-	return {
-		...x,
-		target_id: x.targetId && x.targetId,
-		changes: x.changes && x.changes.map(unwrapAuditLogChange),
-		user_id: x.userId && x.userId,
-		action_type: x.actionType && x.actionType,
-		options: x.options && unwrapOptionalAuditEntryInfo(x.options),
-	};
-}
+export const unwrapAuditLogEntryPartial = unwrapAuditLogEntry as (x: Partial<AuditLogEntry>) => Partial<RawAuditLogEntry>;

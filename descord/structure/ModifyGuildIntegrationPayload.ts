@@ -1,4 +1,5 @@
 import { RawModifyGuildIntegrationPayload } from '../raw/RawModifyGuildIntegrationPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 import { IntegrationExpireBehavior } from '../enum/IntegrationExpireBehavior.ts';
 
@@ -14,38 +15,10 @@ export interface ModifyGuildIntegrationPayload {
 }
 
 
-export function wrapModifyGuildIntegrationPayload(x: RawModifyGuildIntegrationPayload): ModifyGuildIntegrationPayload {
-	return {
-		...x,
-		expireBehavior: x.expire_behavior,
-		expireGracePeriod: x.expire_grace_period,
-		enableEmoticons: x.enable_emoticons,
-	};
-}
+export const wrapModifyGuildIntegrationPayload = fromApiCasing as (x: RawModifyGuildIntegrationPayload) => ModifyGuildIntegrationPayload;
 
-export function unwrapModifyGuildIntegrationPayload(x: ModifyGuildIntegrationPayload): RawModifyGuildIntegrationPayload {
-	return {
-		...x,
-		expire_behavior: x.expireBehavior,
-		expire_grace_period: x.expireGracePeriod,
-		enable_emoticons: x.enableEmoticons,
-	};
-}
+export const unwrapModifyGuildIntegrationPayload = toApiCasing as (x: ModifyGuildIntegrationPayload) => RawModifyGuildIntegrationPayload;
 
-export function wrapModifyGuildIntegrationPayloadPartial(x: Partial<RawModifyGuildIntegrationPayload>): Partial<ModifyGuildIntegrationPayload> {
-	return {
-		...x,
-		expireBehavior: x.expire_behavior && x.expire_behavior,
-		expireGracePeriod: x.expire_grace_period && x.expire_grace_period,
-		enableEmoticons: x.enable_emoticons && x.enable_emoticons,
-	};
-}
+export const wrapModifyGuildIntegrationPayloadPartial = wrapModifyGuildIntegrationPayload as (x: Partial<RawModifyGuildIntegrationPayload>) => Partial<ModifyGuildIntegrationPayload>;
 
-export function unwrapModifyGuildIntegrationPayloadPartial(x: Partial<ModifyGuildIntegrationPayload>): Partial<RawModifyGuildIntegrationPayload> {
-	return {
-		...x,
-		expire_behavior: x.expireBehavior && x.expireBehavior,
-		expire_grace_period: x.expireGracePeriod && x.expireGracePeriod,
-		enable_emoticons: x.enableEmoticons && x.enableEmoticons,
-	};
-}
+export const unwrapModifyGuildIntegrationPayloadPartial = unwrapModifyGuildIntegrationPayload as (x: Partial<ModifyGuildIntegrationPayload>) => Partial<RawModifyGuildIntegrationPayload>;

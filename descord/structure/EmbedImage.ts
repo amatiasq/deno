@@ -1,4 +1,5 @@
 import { RawEmbedImage } from '../raw/RawEmbedImage.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
@@ -15,19 +16,9 @@ export interface EmbedImage {
 }
 
 
-export function wrapEmbedImage(x: RawEmbedImage): EmbedImage {
-	return {
-		...x,
-		proxyUrl: x.proxy_url && x.proxy_url,
-	};
-}
+export const wrapEmbedImage = fromApiCasing as (x: RawEmbedImage) => EmbedImage;
 
-export function unwrapEmbedImage(x: EmbedImage): RawEmbedImage {
-	return {
-		...x,
-		proxy_url: x.proxyUrl && x.proxyUrl,
-	};
-}
+export const unwrapEmbedImage = toApiCasing as (x: EmbedImage) => RawEmbedImage;
 
 export const wrapEmbedImagePartial = wrapEmbedImage as (x: Partial<RawEmbedImage>) => Partial<EmbedImage>;
 

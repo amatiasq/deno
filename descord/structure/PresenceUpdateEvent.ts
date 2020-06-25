@@ -1,4 +1,5 @@
 import { RawPresenceUpdateEvent } from '../raw/RawPresenceUpdateEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	GuildId,
 	RoleId,
@@ -33,10 +34,9 @@ export interface PresenceUpdateEvent {
 
 export function wrapPresenceUpdateEvent(x: RawPresenceUpdateEvent): PresenceUpdateEvent {
 	return {
-		...x,
+		...fromApiCasing(x),
 		user: wrapUser(x.user),
 		game: x.game && wrapActivity(x.game),
-		guildId: x.guild_id,
 		activities: x.activities.map(wrapActivity),
 		clientStatus: wrapClientStatus(x.client_status),
 		premiumSince: x.premium_since && parseISO8601Timestamp(x.premium_since),
@@ -45,10 +45,9 @@ export function wrapPresenceUpdateEvent(x: RawPresenceUpdateEvent): PresenceUpda
 
 export function unwrapPresenceUpdateEvent(x: PresenceUpdateEvent): RawPresenceUpdateEvent {
 	return {
-		...x,
+		...toApiCasing(x),
 		user: unwrapUser(x.user),
 		game: x.game && unwrapActivity(x.game),
-		guild_id: x.guildId,
 		activities: x.activities.map(unwrapActivity),
 		client_status: unwrapClientStatus(x.clientStatus),
 		premium_since: x.premiumSince && unparseISO8601Timestamp(x.premiumSince),
@@ -57,10 +56,9 @@ export function unwrapPresenceUpdateEvent(x: PresenceUpdateEvent): RawPresenceUp
 
 export function wrapPresenceUpdateEventPartial(x: Partial<RawPresenceUpdateEvent>): Partial<PresenceUpdateEvent> {
 	return {
-		...x,
+		...fromApiCasing(x),
 		user: x.user && wrapUser(x.user),
 		game: x.game && wrapActivity(x.game),
-		guildId: x.guild_id && x.guild_id,
 		activities: x.activities && x.activities.map(wrapActivity),
 		clientStatus: x.client_status && wrapClientStatus(x.client_status),
 		premiumSince: x.premium_since && parseISO8601Timestamp(x.premium_since),
@@ -69,10 +67,9 @@ export function wrapPresenceUpdateEventPartial(x: Partial<RawPresenceUpdateEvent
 
 export function unwrapPresenceUpdateEventPartial(x: Partial<PresenceUpdateEvent>): Partial<RawPresenceUpdateEvent> {
 	return {
-		...x,
+		...toApiCasing(x),
 		user: x.user && unwrapUser(x.user),
 		game: x.game && unwrapActivity(x.game),
-		guild_id: x.guildId && x.guildId,
 		activities: x.activities && x.activities.map(unwrapActivity),
 		client_status: x.clientStatus && unwrapClientStatus(x.clientStatus),
 		premium_since: x.premiumSince && unparseISO8601Timestamp(x.premiumSince),

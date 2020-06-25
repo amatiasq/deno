@@ -1,4 +1,5 @@
 import { RawIntegration } from '../raw/RawIntegration.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	IntegrationId,
 	RoleId,
@@ -41,11 +42,7 @@ export interface Integration {
 
 export function wrapIntegration(x: RawIntegration): Integration {
 	return {
-		...x,
-		roleId: x.role_id,
-		enableEmoticons: x.enable_emoticons && x.enable_emoticons,
-		expireBehavior: x.expire_behavior,
-		expireGracePeriod: x.expire_grace_period,
+		...fromApiCasing(x),
 		user: wrapUser(x.user),
 		account: wrapIntegrationAccount(x.account),
 		syncedAt: parseISO8601Timestamp(x.synced_at),
@@ -54,11 +51,7 @@ export function wrapIntegration(x: RawIntegration): Integration {
 
 export function unwrapIntegration(x: Integration): RawIntegration {
 	return {
-		...x,
-		role_id: x.roleId,
-		enable_emoticons: x.enableEmoticons && x.enableEmoticons,
-		expire_behavior: x.expireBehavior,
-		expire_grace_period: x.expireGracePeriod,
+		...toApiCasing(x),
 		user: unwrapUser(x.user),
 		account: unwrapIntegrationAccount(x.account),
 		synced_at: unparseISO8601Timestamp(x.syncedAt),
@@ -67,11 +60,7 @@ export function unwrapIntegration(x: Integration): RawIntegration {
 
 export function wrapIntegrationPartial(x: Partial<RawIntegration>): Partial<Integration> {
 	return {
-		...x,
-		roleId: x.role_id && x.role_id,
-		enableEmoticons: x.enable_emoticons && x.enable_emoticons,
-		expireBehavior: x.expire_behavior && x.expire_behavior,
-		expireGracePeriod: x.expire_grace_period && x.expire_grace_period,
+		...fromApiCasing(x),
 		user: x.user && wrapUser(x.user),
 		account: x.account && wrapIntegrationAccount(x.account),
 		syncedAt: x.synced_at && parseISO8601Timestamp(x.synced_at),
@@ -80,11 +69,7 @@ export function wrapIntegrationPartial(x: Partial<RawIntegration>): Partial<Inte
 
 export function unwrapIntegrationPartial(x: Partial<Integration>): Partial<RawIntegration> {
 	return {
-		...x,
-		role_id: x.roleId && x.roleId,
-		enable_emoticons: x.enableEmoticons && x.enableEmoticons,
-		expire_behavior: x.expireBehavior && x.expireBehavior,
-		expire_grace_period: x.expireGracePeriod && x.expireGracePeriod,
+		...toApiCasing(x),
 		user: x.user && unwrapUser(x.user),
 		account: x.account && unwrapIntegrationAccount(x.account),
 		synced_at: x.syncedAt && unparseISO8601Timestamp(x.syncedAt),

@@ -23,6 +23,8 @@ const PARSED = [
 	'Date',
 ];
 
+const HAS_UNDERSCORE_PROP = /(\w+(?:_\w+)+)(\??):/;
+
 console.log(await main());
 
 async function main() {
@@ -32,8 +34,10 @@ async function main() {
 }
 
 function transform(content: string) {
-	const { name, parent, imports, properties, partials } = parse(content);
-	const newImports = adaptImports(name, imports, partials);
+	const { name, parent, imports, properties, partials, hasCasing } = parse(
+		content,
+	);
+	const newImports = adaptImports(name, imports, partials, hasCasing);
 	const withParsers = PARSEABLE.reduce(
 		(x, y, i) => x.replace(new RegExp(`: ${y}`, 'g'), `: ${PARSED[i]}`),
 		content,
@@ -45,19 +49,35 @@ function transform(content: string) {
 
 	return `import { Raw${name} } from '../raw/Raw${name}.ts';
 ${toCamelCase(result)}
-${writeFunctions(name, parent, properties)}`;
+${writeFunctions(name, parent, properties, hasCasing)}`;
 }
 
-function writeFunctions(name: string, parent: string, properties: string) {
-	const wrapBody = writeWrap(parent, properties);
-	const unwrapBody = writeUnwrap(parent, properties);
-	const wrapPartialBody = writeWrapPartial(parent, properties);
-	const unwrapPartialBody = writeUnwrapPartial(parent, properties);
+function writeFunctions(
+	name: string,
+	parent: string,
+	properties: string,
+	hasCasing: boolean,
+) {
+	const wrapBody = writeWrap(parent, properties, hasCasing);
+	const unwrapBody = writeUnwrap(parent, properties, hasCasing);
+	const wrapPartialBody = writeWrapPartial(parent, properties, hasCasing);
+	const unwrapPartialBody = writeUnwrapPartial(parent, properties, hasCasing);
+
+	const isWrapSimple = wrapBody.match(/^return (\w+)\(x\);$/);
+	const isUnwrapSimple = unwrapBody.match(/^return (\w+)\(x\);$/);
 
 	return `
-export function wrap${name}(x: Raw${name}): ${name} {\n\t${wrapBody}\n}
+export ${
+		isWrapSimple
+			? `const wrap${name} = ${isWrapSimple[1]} as (x: Raw${name}) => ${name};`
+			: `function wrap${name}(x: Raw${name}): ${name} {\n\t${wrapBody}\n}`
+	}
 
-export function unwrap${name}(x: ${name}): Raw${name} {\n\t${unwrapBody}\n}
+export ${
+		isUnwrapSimple
+			? `const unwrap${name} = ${isUnwrapSimple[1]} as (x: ${name}) => Raw${name};`
+			: `function unwrap${name}(x: ${name}): Raw${name} {\n\t${unwrapBody}\n}`
+	}
 
 export ${
 		wrapPartialBody === wrapBody
@@ -72,7 +92,12 @@ export ${
 	}`;
 }
 
-function adaptImports(name: string, imports: string, partials: string[]) {
+function adaptImports(
+	name: string,
+	imports: string,
+	partials: string[],
+	hasCasing: boolean,
+) {
 	const list = PARSEABLE.reduce(
 		(x, y, i) =>
 			x.replace(y, `${PARSEABLE_IMPORT[i]}parse${y}, unparse${y}`),
@@ -84,6 +109,12 @@ function adaptImports(name: string, imports: string, partials: string[]) {
 		)
 		.split('\n')
 		.filter(Boolean);
+
+	if (hasCasing) {
+		list.unshift(
+			"import { toApiCasing, fromApiCasing } from '../internals/casing.ts';",
+		);
+	}
 
 	const finish = partials.reduce(
 		(x, partial) =>
@@ -115,46 +146,75 @@ function parse(content: string) {
 		parent: match[3],
 		properties: match[4],
 		partials: [...partials].map(x => x[1]),
+		hasCasing: HAS_UNDERSCORE_PROP.test(content),
 	};
 }
 
-function writeWrap(parent: string, properties: string) {
-	const casing = conversor(toCamelCase, identity);
+function writeWrap(parent: string, properties: string, hasCasing: boolean) {
 	const parse = wrapConversor('parse', toCamelCase, identity);
 	const wrap = wrapConversor('wrap', toCamelCase, identity);
-	const props = serialization(properties, casing, parse, wrap);
-	const child = parent ? `wrap${parent}(x)` : 'x';
+
+	const props = serialization(properties, parse, wrap);
+	const child = parent
+		? `wrap${parent}(x)`
+		: hasCasing
+		? 'fromApiCasing(x)'
+		: 'x';
+
 	return buildBody(child, props);
 }
 
-function writeUnwrap(parent: string, properties: string) {
-	const casing = conversor(identity, toCamelCase);
+function writeUnwrap(parent: string, properties: string, hasCasing: boolean) {
 	const unparse = wrapConversor('unparse', identity, toCamelCase);
 	const unwrap = wrapConversor('unwrap', identity, toCamelCase);
-	const props = serialization(properties, casing, unparse, unwrap);
-	const child = parent ? `unwrap${parent}(x)` : 'x';
+
+	const props = serialization(properties, unparse, unwrap);
+	const child = parent
+		? `unwrap${parent}(x)`
+		: hasCasing
+		? 'toApiCasing(x)'
+		: 'x';
+
 	return buildBody(child, props);
 }
 
-function writeWrapPartial(parent: string, properties: string) {
-	const casing = forceOptional(conversor(toCamelCase, identity));
+function writeWrapPartial(
+	parent: string,
+	properties: string,
+	hasCasing: boolean,
+) {
 	const parse = forceOptional(wrapConversor('parse', toCamelCase, identity));
 	const wrap = forceOptional(wrapConversor('wrap', toCamelCase, identity));
-	const props = serialization(properties, casing, parse, wrap);
-	const child = parent ? `wrap${parent}(x)` : 'x';
+
+	const props = serialization(properties, parse, wrap);
+	const child = parent
+		? `wrap${parent}(x)`
+		: hasCasing
+		? 'fromApiCasing(x)'
+		: 'x';
+
 	return buildBody(child, props);
 }
 
-function writeUnwrapPartial(parent: string, properties: string) {
-	const casing = forceOptional(conversor(identity, toCamelCase));
+function writeUnwrapPartial(
+	parent: string,
+	properties: string,
+	hasCasing: boolean,
+) {
 	const unparse = forceOptional(
 		wrapConversor('unparse', identity, toCamelCase),
 	);
 	const unwrap = forceOptional(
 		wrapConversor('unwrap', identity, toCamelCase),
 	);
-	const props = serialization(properties, casing, unparse, unwrap);
-	const child = parent ? `unwrap${parent}(x)` : 'x';
+
+	const props = serialization(properties, unparse, unwrap);
+	const child = parent
+		? `unwrap${parent}(x)`
+		: hasCasing
+		? 'toApiCasing(x)'
+		: 'x';
+
 	return buildBody(child, props);
 }
 
@@ -169,7 +229,7 @@ function buildBody(base: string, props: string) {
 
 function serialization(
 	properties: string,
-	onCasing: Conversor,
+	// onCasing: Conversor,
 	onSerializable: Conversor,
 	onEntity: Conversor,
 ) {
@@ -205,9 +265,9 @@ function serialization(
 					);
 			}
 
-			if (/(\w+(?:_\w+)+)(\??):/.test(line)) {
-				return line.replace(/((?:\w|_)+)(\??): .*;/, onCasing);
-			}
+			// if (HAS_UNDERSCORE_PROP.test(line)) {
+			// 	return line.replace(/((?:\w|_)+)(\??): .*;/, onCasing);
+			// }
 		})
 		.filter(Boolean)
 		.join('\n');

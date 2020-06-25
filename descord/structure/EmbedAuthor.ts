@@ -1,4 +1,5 @@
 import { RawEmbedAuthor } from '../raw/RawEmbedAuthor.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 
 // https://discord.com/developers/docs/resources/channel#embed-object-embed-author-structure
 
@@ -14,21 +15,9 @@ export interface EmbedAuthor {
 }
 
 
-export function wrapEmbedAuthor(x: RawEmbedAuthor): EmbedAuthor {
-	return {
-		...x,
-		iconUrl: x.icon_url && x.icon_url,
-		proxyIconUrl: x.proxy_icon_url && x.proxy_icon_url,
-	};
-}
+export const wrapEmbedAuthor = fromApiCasing as (x: RawEmbedAuthor) => EmbedAuthor;
 
-export function unwrapEmbedAuthor(x: EmbedAuthor): RawEmbedAuthor {
-	return {
-		...x,
-		icon_url: x.iconUrl && x.iconUrl,
-		proxy_icon_url: x.proxyIconUrl && x.proxyIconUrl,
-	};
-}
+export const unwrapEmbedAuthor = toApiCasing as (x: EmbedAuthor) => RawEmbedAuthor;
 
 export const wrapEmbedAuthorPartial = wrapEmbedAuthor as (x: Partial<RawEmbedAuthor>) => Partial<EmbedAuthor>;
 

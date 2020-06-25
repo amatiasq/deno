@@ -1,4 +1,5 @@
 import { RawRequestGuildMembersCommand } from '../raw/RawRequestGuildMembersCommand.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId, integer, UserId } from '../internals/type-aliases.ts';
 
 export interface RequestGuildMembersCommand {
@@ -17,34 +18,10 @@ export interface RequestGuildMembersCommand {
 }
 
 
-export function wrapRequestGuildMembersCommand(x: RawRequestGuildMembersCommand): RequestGuildMembersCommand {
-	return {
-		...x,
-		guildId: x.guild_id,
-		userIds: x.user_ids && x.user_ids,
-	};
-}
+export const wrapRequestGuildMembersCommand = fromApiCasing as (x: RawRequestGuildMembersCommand) => RequestGuildMembersCommand;
 
-export function unwrapRequestGuildMembersCommand(x: RequestGuildMembersCommand): RawRequestGuildMembersCommand {
-	return {
-		...x,
-		guild_id: x.guildId,
-		user_ids: x.userIds && x.userIds,
-	};
-}
+export const unwrapRequestGuildMembersCommand = toApiCasing as (x: RequestGuildMembersCommand) => RawRequestGuildMembersCommand;
 
-export function wrapRequestGuildMembersCommandPartial(x: Partial<RawRequestGuildMembersCommand>): Partial<RequestGuildMembersCommand> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		userIds: x.user_ids && x.user_ids,
-	};
-}
+export const wrapRequestGuildMembersCommandPartial = wrapRequestGuildMembersCommand as (x: Partial<RawRequestGuildMembersCommand>) => Partial<RequestGuildMembersCommand>;
 
-export function unwrapRequestGuildMembersCommandPartial(x: Partial<RequestGuildMembersCommand>): Partial<RawRequestGuildMembersCommand> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		user_ids: x.userIds && x.userIds,
-	};
-}
+export const unwrapRequestGuildMembersCommandPartial = unwrapRequestGuildMembersCommand as (x: Partial<RequestGuildMembersCommand>) => Partial<RawRequestGuildMembersCommand>;

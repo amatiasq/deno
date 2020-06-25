@@ -1,4 +1,5 @@
 import { RawTypingStartEvent } from '../raw/RawTypingStartEvent.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	ChannelId,
 	GuildId,
@@ -23,10 +24,7 @@ export interface TypingStartEvent {
 
 export function wrapTypingStartEvent(x: RawTypingStartEvent): TypingStartEvent {
 	return {
-		...x,
-		channelId: x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-		userId: x.user_id,
+		...fromApiCasing(x),
 		timestamp: parseUnixTimestamp(x.timestamp),
 		member: x.member && wrapGuildMember(x.member),
 	};
@@ -34,10 +32,7 @@ export function wrapTypingStartEvent(x: RawTypingStartEvent): TypingStartEvent {
 
 export function unwrapTypingStartEvent(x: TypingStartEvent): RawTypingStartEvent {
 	return {
-		...x,
-		channel_id: x.channelId,
-		guild_id: x.guildId && x.guildId,
-		user_id: x.userId,
+		...toApiCasing(x),
 		timestamp: unparseUnixTimestamp(x.timestamp),
 		member: x.member && unwrapGuildMember(x.member),
 	};
@@ -45,10 +40,7 @@ export function unwrapTypingStartEvent(x: TypingStartEvent): RawTypingStartEvent
 
 export function wrapTypingStartEventPartial(x: Partial<RawTypingStartEvent>): Partial<TypingStartEvent> {
 	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-		guildId: x.guild_id && x.guild_id,
-		userId: x.user_id && x.user_id,
+		...fromApiCasing(x),
 		timestamp: x.timestamp && parseUnixTimestamp(x.timestamp),
 		member: x.member && wrapGuildMember(x.member),
 	};
@@ -56,10 +48,7 @@ export function wrapTypingStartEventPartial(x: Partial<RawTypingStartEvent>): Pa
 
 export function unwrapTypingStartEventPartial(x: Partial<TypingStartEvent>): Partial<RawTypingStartEvent> {
 	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-		guild_id: x.guildId && x.guildId,
-		user_id: x.userId && x.userId,
+		...toApiCasing(x),
 		timestamp: x.timestamp && unparseUnixTimestamp(x.timestamp),
 		member: x.member && unwrapGuildMember(x.member),
 	};

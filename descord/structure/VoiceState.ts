@@ -1,4 +1,5 @@
 import { RawVoiceState } from '../raw/RawVoiceState.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { GuildId, ChannelId, UserId } from '../internals/type-aliases.ts';
 import { GuildMember, wrapGuildMember, unwrapGuildMember } from './GuildMember.ts';
 
@@ -32,56 +33,18 @@ export interface VoiceState {
 
 export function wrapVoiceState(x: RawVoiceState): VoiceState {
 	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id,
-		userId: x.user_id,
+		...fromApiCasing(x),
 		member: x.member && wrapGuildMember(x.member),
-		sessionId: x.session_id,
-		selfDeaf: x.self_deaf,
-		selfMute: x.self_mute,
-		selfStream: x.self_stream && x.self_stream,
 	};
 }
 
 export function unwrapVoiceState(x: VoiceState): RawVoiceState {
 	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId,
-		user_id: x.userId,
+		...toApiCasing(x),
 		member: x.member && unwrapGuildMember(x.member),
-		session_id: x.sessionId,
-		self_deaf: x.selfDeaf,
-		self_mute: x.selfMute,
-		self_stream: x.selfStream && x.selfStream,
 	};
 }
 
-export function wrapVoiceStatePartial(x: Partial<RawVoiceState>): Partial<VoiceState> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id && x.channel_id,
-		userId: x.user_id && x.user_id,
-		member: x.member && wrapGuildMember(x.member),
-		sessionId: x.session_id && x.session_id,
-		selfDeaf: x.self_deaf && x.self_deaf,
-		selfMute: x.self_mute && x.self_mute,
-		selfStream: x.self_stream && x.self_stream,
-	};
-}
+export const wrapVoiceStatePartial = wrapVoiceState as (x: Partial<RawVoiceState>) => Partial<VoiceState>;
 
-export function unwrapVoiceStatePartial(x: Partial<VoiceState>): Partial<RawVoiceState> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId && x.channelId,
-		user_id: x.userId && x.userId,
-		member: x.member && unwrapGuildMember(x.member),
-		session_id: x.sessionId && x.sessionId,
-		self_deaf: x.selfDeaf && x.selfDeaf,
-		self_mute: x.selfMute && x.selfMute,
-		self_stream: x.selfStream && x.selfStream,
-	};
-}
+export const unwrapVoiceStatePartial = unwrapVoiceState as (x: Partial<VoiceState>) => Partial<RawVoiceState>;

@@ -1,4 +1,5 @@
 import { RawCreateGroupDmPayload } from '../raw/RawCreateGroupDmPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 
 // https://discord.com/developers/docs/resources/user#create-group-dm-json-params
 
@@ -10,30 +11,10 @@ export interface CreateGroupDmPayload {
 }
 
 
-export function wrapCreateGroupDmPayload(x: RawCreateGroupDmPayload): CreateGroupDmPayload {
-	return {
-		...x,
-		accessTokens: x.access_tokens,
-	};
-}
+export const wrapCreateGroupDmPayload = fromApiCasing as (x: RawCreateGroupDmPayload) => CreateGroupDmPayload;
 
-export function unwrapCreateGroupDmPayload(x: CreateGroupDmPayload): RawCreateGroupDmPayload {
-	return {
-		...x,
-		access_tokens: x.accessTokens,
-	};
-}
+export const unwrapCreateGroupDmPayload = toApiCasing as (x: CreateGroupDmPayload) => RawCreateGroupDmPayload;
 
-export function wrapCreateGroupDmPayloadPartial(x: Partial<RawCreateGroupDmPayload>): Partial<CreateGroupDmPayload> {
-	return {
-		...x,
-		accessTokens: x.access_tokens && x.access_tokens,
-	};
-}
+export const wrapCreateGroupDmPayloadPartial = wrapCreateGroupDmPayload as (x: Partial<RawCreateGroupDmPayload>) => Partial<CreateGroupDmPayload>;
 
-export function unwrapCreateGroupDmPayloadPartial(x: Partial<CreateGroupDmPayload>): Partial<RawCreateGroupDmPayload> {
-	return {
-		...x,
-		access_tokens: x.accessTokens && x.accessTokens,
-	};
-}
+export const unwrapCreateGroupDmPayloadPartial = unwrapCreateGroupDmPayload as (x: Partial<CreateGroupDmPayload>) => Partial<RawCreateGroupDmPayload>;

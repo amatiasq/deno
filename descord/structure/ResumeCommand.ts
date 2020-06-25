@@ -1,4 +1,5 @@
 import { RawResumeCommand } from '../raw/RawResumeCommand.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 
 export interface ResumeCommand {
@@ -11,30 +12,10 @@ export interface ResumeCommand {
 }
 
 
-export function wrapResumeCommand(x: RawResumeCommand): ResumeCommand {
-	return {
-		...x,
-		sessionId: x.session_id,
-	};
-}
+export const wrapResumeCommand = fromApiCasing as (x: RawResumeCommand) => ResumeCommand;
 
-export function unwrapResumeCommand(x: ResumeCommand): RawResumeCommand {
-	return {
-		...x,
-		session_id: x.sessionId,
-	};
-}
+export const unwrapResumeCommand = toApiCasing as (x: ResumeCommand) => RawResumeCommand;
 
-export function wrapResumeCommandPartial(x: Partial<RawResumeCommand>): Partial<ResumeCommand> {
-	return {
-		...x,
-		sessionId: x.session_id && x.session_id,
-	};
-}
+export const wrapResumeCommandPartial = wrapResumeCommand as (x: Partial<RawResumeCommand>) => Partial<ResumeCommand>;
 
-export function unwrapResumeCommandPartial(x: Partial<ResumeCommand>): Partial<RawResumeCommand> {
-	return {
-		...x,
-		session_id: x.sessionId && x.sessionId,
-	};
-}
+export const unwrapResumeCommandPartial = unwrapResumeCommand as (x: Partial<ResumeCommand>) => Partial<RawResumeCommand>;

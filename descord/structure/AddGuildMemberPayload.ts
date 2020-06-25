@@ -1,4 +1,5 @@
 import { RawAddGuildMemberPayload } from '../raw/RawAddGuildMemberPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { RoleId } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/guild#add-guild-member-json-params
@@ -17,30 +18,10 @@ export interface AddGuildMemberPayload {
 }
 
 
-export function wrapAddGuildMemberPayload(x: RawAddGuildMemberPayload): AddGuildMemberPayload {
-	return {
-		...x,
-		accessToken: x.access_token,
-	};
-}
+export const wrapAddGuildMemberPayload = fromApiCasing as (x: RawAddGuildMemberPayload) => AddGuildMemberPayload;
 
-export function unwrapAddGuildMemberPayload(x: AddGuildMemberPayload): RawAddGuildMemberPayload {
-	return {
-		...x,
-		access_token: x.accessToken,
-	};
-}
+export const unwrapAddGuildMemberPayload = toApiCasing as (x: AddGuildMemberPayload) => RawAddGuildMemberPayload;
 
-export function wrapAddGuildMemberPayloadPartial(x: Partial<RawAddGuildMemberPayload>): Partial<AddGuildMemberPayload> {
-	return {
-		...x,
-		accessToken: x.access_token && x.access_token,
-	};
-}
+export const wrapAddGuildMemberPayloadPartial = wrapAddGuildMemberPayload as (x: Partial<RawAddGuildMemberPayload>) => Partial<AddGuildMemberPayload>;
 
-export function unwrapAddGuildMemberPayloadPartial(x: Partial<AddGuildMemberPayload>): Partial<RawAddGuildMemberPayload> {
-	return {
-		...x,
-		access_token: x.accessToken && x.accessToken,
-	};
-}
+export const unwrapAddGuildMemberPayloadPartial = unwrapAddGuildMemberPayload as (x: Partial<AddGuildMemberPayload>) => Partial<RawAddGuildMemberPayload>;

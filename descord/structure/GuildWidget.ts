@@ -1,4 +1,5 @@
 import { RawGuildWidget } from '../raw/RawGuildWidget.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/guild#guild-widget-object-guild-widget-structure
@@ -11,19 +12,9 @@ export interface GuildWidget {
 }
 
 
-export function wrapGuildWidget(x: RawGuildWidget): GuildWidget {
-	return {
-		...x,
-		channelId: x.channel_id && x.channel_id,
-	};
-}
+export const wrapGuildWidget = fromApiCasing as (x: RawGuildWidget) => GuildWidget;
 
-export function unwrapGuildWidget(x: GuildWidget): RawGuildWidget {
-	return {
-		...x,
-		channel_id: x.channelId && x.channelId,
-	};
-}
+export const unwrapGuildWidget = toApiCasing as (x: GuildWidget) => RawGuildWidget;
 
 export const wrapGuildWidgetPartial = wrapGuildWidget as (x: Partial<RawGuildWidget>) => Partial<GuildWidget>;
 

@@ -1,4 +1,5 @@
 import { RawEmbedThumbnail } from '../raw/RawEmbedThumbnail.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer } from '../internals/type-aliases.ts';
 
 // https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure
@@ -15,19 +16,9 @@ export interface EmbedThumbnail {
 }
 
 
-export function wrapEmbedThumbnail(x: RawEmbedThumbnail): EmbedThumbnail {
-	return {
-		...x,
-		proxyUrl: x.proxy_url && x.proxy_url,
-	};
-}
+export const wrapEmbedThumbnail = fromApiCasing as (x: RawEmbedThumbnail) => EmbedThumbnail;
 
-export function unwrapEmbedThumbnail(x: EmbedThumbnail): RawEmbedThumbnail {
-	return {
-		...x,
-		proxy_url: x.proxyUrl && x.proxyUrl,
-	};
-}
+export const unwrapEmbedThumbnail = toApiCasing as (x: EmbedThumbnail) => RawEmbedThumbnail;
 
 export const wrapEmbedThumbnailPartial = wrapEmbedThumbnail as (x: Partial<RawEmbedThumbnail>) => Partial<EmbedThumbnail>;
 

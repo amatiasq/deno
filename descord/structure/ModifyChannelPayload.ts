@@ -1,4 +1,5 @@
 import { RawModifyChannelPayload } from '../raw/RawModifyChannelPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { integer, CategoryId } from '../internals/type-aliases.ts';
 import { ChannelType } from '../enum/ChannelType.ts';
 import { Overwrite, wrapOverwrite, unwrapOverwrite } from './Overwrite.ts';
@@ -31,21 +32,15 @@ export interface ModifyChannelPayload {
 
 export function wrapModifyChannelPayload(x: RawModifyChannelPayload): ModifyChannelPayload {
 	return {
-		...x,
-		rateLimitPerUser: x.rate_limit_per_user && x.rate_limit_per_user,
-		userLimit: x.user_limit && x.user_limit,
+		...fromApiCasing(x),
 		permissionOverwrites: x.permission_overwrites && x.permission_overwrites.map(wrapOverwrite),
-		parentId: x.parent_id && x.parent_id,
 	};
 }
 
 export function unwrapModifyChannelPayload(x: ModifyChannelPayload): RawModifyChannelPayload {
 	return {
-		...x,
-		rate_limit_per_user: x.rateLimitPerUser && x.rateLimitPerUser,
-		user_limit: x.userLimit && x.userLimit,
+		...toApiCasing(x),
 		permission_overwrites: x.permissionOverwrites && x.permissionOverwrites.map(unwrapOverwrite),
-		parent_id: x.parentId && x.parentId,
 	};
 }
 

@@ -1,4 +1,5 @@
 import { RawChannelMention } from '../raw/RawChannelMention.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { ChannelId, GuildId } from '../internals/type-aliases.ts';
 import { ChannelType } from '../enum/ChannelType.ts';
 
@@ -16,30 +17,10 @@ export interface ChannelMention {
 }
 
 
-export function wrapChannelMention(x: RawChannelMention): ChannelMention {
-	return {
-		...x,
-		guildId: x.guild_id,
-	};
-}
+export const wrapChannelMention = fromApiCasing as (x: RawChannelMention) => ChannelMention;
 
-export function unwrapChannelMention(x: ChannelMention): RawChannelMention {
-	return {
-		...x,
-		guild_id: x.guildId,
-	};
-}
+export const unwrapChannelMention = toApiCasing as (x: ChannelMention) => RawChannelMention;
 
-export function wrapChannelMentionPartial(x: Partial<RawChannelMention>): Partial<ChannelMention> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-	};
-}
+export const wrapChannelMentionPartial = wrapChannelMention as (x: Partial<RawChannelMention>) => Partial<ChannelMention>;
 
-export function unwrapChannelMentionPartial(x: Partial<ChannelMention>): Partial<RawChannelMention> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-	};
-}
+export const unwrapChannelMentionPartial = unwrapChannelMention as (x: Partial<ChannelMention>) => Partial<RawChannelMention>;

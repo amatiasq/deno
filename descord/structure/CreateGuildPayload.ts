@@ -1,4 +1,5 @@
 import { RawCreateGuildPayload } from '../raw/RawCreateGuildPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import {
 	VoiceRegionId,
 	ImageData,
@@ -41,29 +42,17 @@ export interface CreateGuildPayload {
 
 export function wrapCreateGuildPayload(x: RawCreateGuildPayload): CreateGuildPayload {
 	return {
-		...x,
-		verificationLevel: x.verification_level && x.verification_level,
-		defaultMessageNotifications: x.default_message_notifications && x.default_message_notifications,
-		explicitContentFilter: x.explicit_content_filter && x.explicit_content_filter,
+		...fromApiCasing(x),
 		roles: x.roles && x.roles.map(wrapRole),
 		channels: x.channels && x.channels.map(wrapChannelPartial),
-		afkChannelId: x.afk_channel_id && x.afk_channel_id,
-		afkTimeout: x.afk_timeout && x.afk_timeout,
-		systemChannelId: x.system_channel_id && x.system_channel_id,
 	};
 }
 
 export function unwrapCreateGuildPayload(x: CreateGuildPayload): RawCreateGuildPayload {
 	return {
-		...x,
-		verification_level: x.verificationLevel && x.verificationLevel,
-		default_message_notifications: x.defaultMessageNotifications && x.defaultMessageNotifications,
-		explicit_content_filter: x.explicitContentFilter && x.explicitContentFilter,
+		...toApiCasing(x),
 		roles: x.roles && x.roles.map(unwrapRole),
 		channels: x.channels && x.channels.map(unwrapChannelPartial),
-		afk_channel_id: x.afkChannelId && x.afkChannelId,
-		afk_timeout: x.afkTimeout && x.afkTimeout,
-		system_channel_id: x.systemChannelId && x.systemChannelId,
 	};
 }
 

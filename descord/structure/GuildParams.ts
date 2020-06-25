@@ -1,4 +1,5 @@
 import { RawGuildParams } from '../raw/RawGuildParams.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 
 // https://discord.com/developers/docs/resources/guild#get-guild-query-string-params
 
@@ -8,19 +9,9 @@ export interface GuildParams {
 }
 
 
-export function wrapGuildParams(x: RawGuildParams): GuildParams {
-	return {
-		...x,
-		withCounts: x.with_counts && x.with_counts,
-	};
-}
+export const wrapGuildParams = fromApiCasing as (x: RawGuildParams) => GuildParams;
 
-export function unwrapGuildParams(x: GuildParams): RawGuildParams {
-	return {
-		...x,
-		with_counts: x.withCounts && x.withCounts,
-	};
-}
+export const unwrapGuildParams = toApiCasing as (x: GuildParams) => RawGuildParams;
 
 export const wrapGuildParamsPartial = wrapGuildParams as (x: Partial<RawGuildParams>) => Partial<GuildParams>;
 

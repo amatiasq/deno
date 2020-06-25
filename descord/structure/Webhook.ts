@@ -1,4 +1,5 @@
 import { RawWebhook } from '../raw/RawWebhook.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { WebhookId, GuildId, ChannelId } from '../internals/type-aliases.ts';
 import { WebhookType } from '../enum/WebhookType.ts';
 import { User, wrapUser, unwrapUser } from './User.ts';
@@ -27,36 +28,18 @@ export interface Webhook {
 
 export function wrapWebhook(x: RawWebhook): Webhook {
 	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id,
+		...fromApiCasing(x),
 		user: x.user && wrapUser(x.user),
 	};
 }
 
 export function unwrapWebhook(x: Webhook): RawWebhook {
 	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId,
+		...toApiCasing(x),
 		user: x.user && unwrapUser(x.user),
 	};
 }
 
-export function wrapWebhookPartial(x: Partial<RawWebhook>): Partial<Webhook> {
-	return {
-		...x,
-		guildId: x.guild_id && x.guild_id,
-		channelId: x.channel_id && x.channel_id,
-		user: x.user && wrapUser(x.user),
-	};
-}
+export const wrapWebhookPartial = wrapWebhook as (x: Partial<RawWebhook>) => Partial<Webhook>;
 
-export function unwrapWebhookPartial(x: Partial<Webhook>): Partial<RawWebhook> {
-	return {
-		...x,
-		guild_id: x.guildId && x.guildId,
-		channel_id: x.channelId && x.channelId,
-		user: x.user && unwrapUser(x.user),
-	};
-}
+export const unwrapWebhookPartial = unwrapWebhook as (x: Partial<Webhook>) => Partial<RawWebhook>;

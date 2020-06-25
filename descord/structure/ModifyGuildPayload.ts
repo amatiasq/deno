@@ -1,4 +1,5 @@
 import { RawModifyGuildPayload } from '../raw/RawModifyGuildPayload.ts';
+import { toApiCasing, fromApiCasing } from '../internals/casing.ts';
 import { VerificationLevel } from '../enum/VerificationLevel.ts';
 import { MessageNotificationLevel } from '../enum/MessageNotificationLevel.ts';
 import { ExplicitContentFilterLevel } from '../enum/ExplicitContentFilterLevel.ts';
@@ -45,66 +46,10 @@ export interface ModifyGuildPayload {
 }
 
 
-export function wrapModifyGuildPayload(x: RawModifyGuildPayload): ModifyGuildPayload {
-	return {
-		...x,
-		verificationLevel: x.verification_level && x.verification_level,
-		defaultMessageNotifications: x.default_message_notifications && x.default_message_notifications,
-		explicitContentFilter: x.explicit_content_filter && x.explicit_content_filter,
-		afkChannelId: x.afk_channel_id && x.afk_channel_id,
-		afkTimeout: x.afk_timeout && x.afk_timeout,
-		ownerId: x.owner_id,
-		systemChannelId: x.system_channel_id && x.system_channel_id,
-		rulesChannelId: x.rules_channel_id && x.rules_channel_id,
-		publicUpdatesChannelId: x.public_updates_channel_id && x.public_updates_channel_id,
-		preferredLocale: x.preferred_locale && x.preferred_locale,
-	};
-}
+export const wrapModifyGuildPayload = fromApiCasing as (x: RawModifyGuildPayload) => ModifyGuildPayload;
 
-export function unwrapModifyGuildPayload(x: ModifyGuildPayload): RawModifyGuildPayload {
-	return {
-		...x,
-		verification_level: x.verificationLevel && x.verificationLevel,
-		default_message_notifications: x.defaultMessageNotifications && x.defaultMessageNotifications,
-		explicit_content_filter: x.explicitContentFilter && x.explicitContentFilter,
-		afk_channel_id: x.afkChannelId && x.afkChannelId,
-		afk_timeout: x.afkTimeout && x.afkTimeout,
-		owner_id: x.ownerId,
-		system_channel_id: x.systemChannelId && x.systemChannelId,
-		rules_channel_id: x.rulesChannelId && x.rulesChannelId,
-		public_updates_channel_id: x.publicUpdatesChannelId && x.publicUpdatesChannelId,
-		preferred_locale: x.preferredLocale && x.preferredLocale,
-	};
-}
+export const unwrapModifyGuildPayload = toApiCasing as (x: ModifyGuildPayload) => RawModifyGuildPayload;
 
-export function wrapModifyGuildPayloadPartial(x: Partial<RawModifyGuildPayload>): Partial<ModifyGuildPayload> {
-	return {
-		...x,
-		verificationLevel: x.verification_level && x.verification_level,
-		defaultMessageNotifications: x.default_message_notifications && x.default_message_notifications,
-		explicitContentFilter: x.explicit_content_filter && x.explicit_content_filter,
-		afkChannelId: x.afk_channel_id && x.afk_channel_id,
-		afkTimeout: x.afk_timeout && x.afk_timeout,
-		ownerId: x.owner_id && x.owner_id,
-		systemChannelId: x.system_channel_id && x.system_channel_id,
-		rulesChannelId: x.rules_channel_id && x.rules_channel_id,
-		publicUpdatesChannelId: x.public_updates_channel_id && x.public_updates_channel_id,
-		preferredLocale: x.preferred_locale && x.preferred_locale,
-	};
-}
+export const wrapModifyGuildPayloadPartial = wrapModifyGuildPayload as (x: Partial<RawModifyGuildPayload>) => Partial<ModifyGuildPayload>;
 
-export function unwrapModifyGuildPayloadPartial(x: Partial<ModifyGuildPayload>): Partial<RawModifyGuildPayload> {
-	return {
-		...x,
-		verification_level: x.verificationLevel && x.verificationLevel,
-		default_message_notifications: x.defaultMessageNotifications && x.defaultMessageNotifications,
-		explicit_content_filter: x.explicitContentFilter && x.explicitContentFilter,
-		afk_channel_id: x.afkChannelId && x.afkChannelId,
-		afk_timeout: x.afkTimeout && x.afkTimeout,
-		owner_id: x.ownerId && x.ownerId,
-		system_channel_id: x.systemChannelId && x.systemChannelId,
-		rules_channel_id: x.rulesChannelId && x.rulesChannelId,
-		public_updates_channel_id: x.publicUpdatesChannelId && x.publicUpdatesChannelId,
-		preferred_locale: x.preferredLocale && x.preferredLocale,
-	};
-}
+export const unwrapModifyGuildPayloadPartial = unwrapModifyGuildPayload as (x: Partial<ModifyGuildPayload>) => Partial<RawModifyGuildPayload>;
