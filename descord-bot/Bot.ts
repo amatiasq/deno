@@ -1,13 +1,13 @@
+import { DiscordClient } from '../descord/DiscordClient.ts';
+import createClient, {
+	DiscordEvent,
+	Intent,
+	Message,
+	User,
+} from '../descord/mod.ts';
 import { BotMessage, wrapBotMessage } from './structure/Message.ts';
 import { logOnce } from './util/log.ts';
 import { padLeft, removeStart, stringish } from './util/string.ts';
-import createClient, {
-	User,
-	Intent,
-	Message,
-	DiscordEvent,
-} from '../descord/mod.ts';
-import { DiscordClient } from '../descord/DiscordClient.ts';
 
 const noop = () => {};
 
