@@ -1,5 +1,5 @@
 export { createClient as default } from './DiscordClient.ts';
-export { createClient as connectDiscord } from './DiscordClient.ts';
+export { DiscordClient } from './DiscordClient.ts';
 
 export * from './internals/type-aliases.ts';
 

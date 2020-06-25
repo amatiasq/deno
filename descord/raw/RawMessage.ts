@@ -98,4 +98,5 @@ export interface RawMessage {
 	message_reference?: RawMessageReference;
 	/** message flags ORd together, describes extra features of the message */
 	flags?: MessageFlag;
+	// METHODS: ../extensions/messageMethods.ts
 }

@@ -1,4 +1,5 @@
 import { MessageFlag } from '../enum/MessageFlag.ts';
+import { messageMethods } from '../extensions/messageMethods.ts';
 import { fromApiCasing, toApiCasing } from '../internals/casing.ts';
 import {
 	ChannelId,
@@ -21,7 +22,6 @@ import { Embed, unwrapEmbed, wrapEmbed } from './Embed.ts';
 import {
 	GuildMember,
 	unwrapGuildMemberPartial,
-	wrapGuildMember,
 	wrapGuildMemberPartial,
 } from './GuildMember.ts';
 import {
@@ -141,10 +141,12 @@ export function wrapMessage(x: RawMessage): Message {
 		messageReference:
 			x.message_reference && wrapMessageReference(x.message_reference),
 
+		...messageMethods(x),
+
 		// Ad-hoc
 		mentions: x.mentions.map(y => ({
 			...wrapUser(y),
-			member: wrapGuildMemberPartial(y.member),
+			member: y.member && wrapGuildMemberPartial(y.member),
 		})),
 	};
 }
@@ -169,7 +171,7 @@ export function unwrapMessage(x: Message): RawMessage {
 		// Ad-hoc
 		mentions: x.mentions.map(y => ({
 			...unwrapUser(y),
-			member: unwrapGuildMemberPartial(y.member),
+			member: y.member && unwrapGuildMemberPartial(y.member),
 		})),
 	};
 }

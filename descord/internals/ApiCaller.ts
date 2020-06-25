@@ -22,7 +22,7 @@ export class ApiCaller {
 			const json = await response.json();
 			return json as T;
 		} catch (err) {
-			console.log(await response.text());
+			console.log('ERROR:', await response.text());
 			throw err;
 		}
 	}
@@ -32,7 +32,11 @@ export class ApiCaller {
 		return this.request<T>(RequestMethod.GET, fullUrl);
 	}
 
-	patch<T = any>(url: string, body?: RequestBody | null, params?: QueryParams) {
+	patch<T = any>(
+		url: string,
+		body?: RequestBody | null,
+		params?: QueryParams,
+	) {
 		const fullUrl = params ? this.addQueryParams(url, params) : url;
 		return this.request<T>(RequestMethod.PATCH, fullUrl, body);
 	}
@@ -42,7 +46,11 @@ export class ApiCaller {
 		return this.request<T>(RequestMethod.PUT, fullUrl, body);
 	}
 
-	post<T = any>(url: string, body?: RequestBody | null, params?: QueryParams) {
+	post<T = any>(
+		url: string,
+		body?: RequestBody | null,
+		params?: QueryParams,
+	) {
 		const fullUrl = params ? this.addQueryParams(url, params) : url;
 		return this.request<T>(RequestMethod.POST, fullUrl, body);
 	}
@@ -57,7 +65,9 @@ export class ApiCaller {
 	}
 
 	addQueryParams(url: string, params: {}) {
-		const serialized = Object.entries(params as { [id: string]: string }).map(
+		const serialized = Object.entries(
+			params as { [id: string]: string },
+		).map(
 			([key, value]) =>
 				`${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
 		);
@@ -76,7 +86,8 @@ function createRequest(
 		method,
 		headers: {
 			Authorization: authorization,
-			'User-Agent': 'Descord (https://github.com/amatiasq/descord, 0.0.1)',
+			'User-Agent':
+				'Descord (https://github.com/amatiasq/descord, 0.0.1)',
 			'Content-Type': 'application/json',
 		},
 		body: body && JSON.stringify(body),
