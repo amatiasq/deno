@@ -86,8 +86,7 @@ function createRequest(
 		method,
 		headers: {
 			Authorization: authorization,
-			'User-Agent':
-				'Descord (https://github.com/amatiasq/descord, 0.0.1)',
+			'User-Agent': 'denord (https://github.com/amatiasq/denord, 0.0.1)',
 			'Content-Type': 'application/json',
 		},
 		body: body && JSON.stringify(body),
