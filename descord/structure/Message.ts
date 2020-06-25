@@ -1,45 +1,46 @@
-import { RawMessage } from '../raw/RawMessage.ts';
 import { MessageFlag } from '../enum/MessageFlag.ts';
+import { fromApiCasing, toApiCasing } from '../internals/casing.ts';
 import {
 	ChannelId,
 	GuildId,
 	integer,
-	parseISO8601Timestamp,
-	unparseISO8601Timestamp,
 	MessageId,
+	parseISO8601Timestamp,
 	RoleId,
+	unparseISO8601Timestamp,
 	WebhookId,
 } from '../internals/type-aliases.ts';
-import { Attachment, wrapAttachment, unwrapAttachment } from './Attachment.ts';
+import { RawMessage } from '../raw/RawMessage.ts';
+import { Attachment, unwrapAttachment, wrapAttachment } from './Attachment.ts';
 import {
 	ChannelMention,
-	wrapChannelMention,
 	unwrapChannelMention,
+	wrapChannelMention,
 } from './ChannelMention.ts';
-import { Embed, wrapEmbed, unwrapEmbed } from './Embed.ts';
+import { Embed, unwrapEmbed, wrapEmbed } from './Embed.ts';
 import {
 	GuildMember,
-	wrapGuildMemberPartial,
 	unwrapGuildMemberPartial,
 	wrapGuildMember,
+	wrapGuildMemberPartial,
 } from './GuildMember.ts';
 import {
 	MessageActivity,
-	wrapMessageActivity,
 	unwrapMessageActivity,
+	wrapMessageActivity,
 } from './MessageActivity.ts';
 import {
 	MessageApplication,
-	wrapMessageApplication,
 	unwrapMessageApplication,
+	wrapMessageApplication,
 } from './MessageApplication.ts';
 import {
 	MessageReference,
-	wrapMessageReference,
 	unwrapMessageReference,
+	wrapMessageReference,
 } from './MessageReference.ts';
-import { Reaction, wrapReaction, unwrapReaction } from './Reaction.ts';
-import { User, wrapUser, unwrapUser } from './User.ts';
+import { Reaction, unwrapReaction, wrapReaction } from './Reaction.ts';
+import { unwrapUser, User, wrapUser } from './User.ts';
 
 // https://discord.com/developers/docs/resources/channel#message-object-message-structure
 
@@ -125,21 +126,16 @@ export interface Message {
 
 export function wrapMessage(x: RawMessage): Message {
 	return {
-		...x,
-		channelId: x.channel_id,
-		guildId: x.guild_id && x.guild_id,
+		...fromApiCasing(x),
 		author: wrapUser(x.author), // webhook
 		member: x.member && wrapGuildMemberPartial(x.member),
 		timestamp: parseISO8601Timestamp(x.timestamp),
 		editedTimestamp: parseISO8601Timestamp(x.edited_timestamp),
-		mentionEveryone: x.mention_everyone,
-		mentionRoles: x.mention_roles,
 		mentionChannels:
 			x.mention_channels && x.mention_channels.map(wrapChannelMention),
 		attachments: x.attachments.map(wrapAttachment),
 		embeds: x.embeds.map(wrapEmbed),
 		reactions: x.reactions && x.reactions.map(wrapReaction),
-		webhookId: x.webhook_id && x.webhook_id,
 		activity: x.activity && wrapMessageActivity(x.activity),
 		application: x.application && wrapMessageApplication(x.application),
 		messageReference:
@@ -155,21 +151,16 @@ export function wrapMessage(x: RawMessage): Message {
 
 export function unwrapMessage(x: Message): RawMessage {
 	return {
-		...x,
-		channel_id: x.channelId,
-		guild_id: x.guildId && x.guildId,
+		...toApiCasing(x),
 		author: unwrapUser(x.author), // webhook
 		member: x.member && unwrapGuildMemberPartial(x.member),
 		timestamp: unparseISO8601Timestamp(x.timestamp),
 		edited_timestamp: unparseISO8601Timestamp(x.editedTimestamp),
-		mention_everyone: x.mentionEveryone,
-		mention_roles: x.mentionRoles,
 		mention_channels:
 			x.mentionChannels && x.mentionChannels.map(unwrapChannelMention),
 		attachments: x.attachments.map(unwrapAttachment),
 		embeds: x.embeds.map(unwrapEmbed),
 		reactions: x.reactions && x.reactions.map(unwrapReaction),
-		webhook_id: x.webhookId && x.webhookId,
 		activity: x.activity && unwrapMessageActivity(x.activity),
 		application: x.application && unwrapMessageApplication(x.application),
 		message_reference:

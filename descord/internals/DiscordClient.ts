@@ -2,19 +2,23 @@ import { DiscordEvent } from '../enum/DiscordEvent.ts';
 import { Intent } from '../enum/Intent.ts';
 import { DiscordApi } from '../internals/DiscordApi.ts';
 import { createGateway, DiscordGateway } from '../internals/DiscordGateway.ts';
+import { CreateMessagePayload } from '../structure/CreateMessagePayload.ts';
 import {
 	DispatchPayload,
 	GatewayPayload,
 } from '../structure/GatewayPayload.ts';
+import { DiscordCache } from './DiscordCache.ts';
+import { ChannelId } from './type-aliases.ts';
 
 export async function createClient(
 	botId: string,
 	token: string,
 	intents: Intent[],
 ) {
-	const api = new DiscordApi(token);
-	const gateway = await createGateway(api, token, intents);
-	return new DiscordClient(botId, token, intents, api, gateway);
+	const cache = new DiscordCache();
+	const api = new DiscordApi(token, cache);
+	const gateway = await createGateway(token, intents, api, cache);
+	return new DiscordClient(botId, token, intents, gateway, api, cache);
 }
 
 export class DiscordClient {
@@ -22,8 +26,9 @@ export class DiscordClient {
 		readonly botId: string,
 		readonly token: string,
 		readonly intents: Intent[],
-		readonly api: DiscordApi,
 		readonly gateway: DiscordGateway,
+		readonly api = new DiscordApi(token),
+		readonly cache = new DiscordCache(),
 	) {}
 
 	onMessage(listener: (message: GatewayPayload) => void) {
@@ -35,5 +40,10 @@ export class DiscordClient {
 		listener: (payload: DispatchPayload<T>) => void,
 	) {
 		return this.gateway.onDispatch(event, listener as any);
+	}
+
+	sendMessage(channelId: ChannelId, content: CreateMessagePayload | string) {
+		const payload = typeof content === 'string' ? { content } : content;
+		return this.api.createMessage(channelId, payload);
 	}
 }

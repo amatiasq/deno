@@ -231,7 +231,7 @@ import { RawVoiceRegion } from '../raw/RawVoiceRegion.ts';
 import { RawWebhook } from '../raw/RawWebhook.ts';
 import { wrapAuditLog } from '../structure/AuditLog.ts';
 import { wrapBan } from '../structure/Ban.ts';
-import { wrapChannel } from '../structure/Channel.ts';
+import { wrapChannel, Channel } from '../structure/Channel.ts';
 import { wrapConnection } from '../structure/Connection.ts';
 import { wrapEmoji } from '../structure/Emoji.ts';
 import { wrapGatewayBot } from '../structure/GatewayBot.ts';
@@ -241,17 +241,22 @@ import { wrapGuildPreview } from '../structure/GuildPreview.ts';
 import { wrapIntegration } from '../structure/Integration.ts';
 import { wrapMessage } from '../structure/Message.ts';
 import { wrapRole } from '../structure/Role.ts';
-import { wrapUser } from '../structure/User.ts';
+import { wrapUser, User } from '../structure/User.ts';
 import { wrapVoiceRegion } from '../structure/VoiceRegion.ts';
 import { wrapWebhook } from '../structure/Webhook.ts';
+import { DiscordCache } from './DiscordCache.ts';
 
 type RawDmChannel = RawChannel & { type: ChannelType.DM };
 
 export class DiscordApi {
 	private readonly api: ApiCaller;
+	private readonly cacheUser: (x: User) => User;
+	private readonly cacheChannel: (x: Channel) => Channel;
 
-	constructor(token: string) {
+	constructor(token: string, cache?: DiscordCache) {
 		this.api = new ApiCaller(token);
+		this.cacheUser = cache ? x => cache.saveUser(x) : x => x;
+		this.cacheChannel = cache ? x => cache.saveChannel(x) : x => x;
 	}
 
 	checkPermissions(permission: Permission) {
@@ -269,7 +274,9 @@ export class DiscordApi {
 	// https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
 	getGuildAuditLog(id: GuildId) {
 		this.checkPermissions(Permission.VIEW_AUDIT_LOG);
-		return this.api.get<RawAuditLog>(GUILD_AUDIT_LOGS(id)).then(wrapAuditLog);
+		return this.api
+			.get<RawAuditLog>(GUILD_AUDIT_LOGS(id))
+			.then(wrapAuditLog);
 	}
 
 	//
@@ -278,7 +285,10 @@ export class DiscordApi {
 
 	// https://discord.com/developers/docs/resources/channel#get-channel
 	getChannel(id: ChannelId) {
-		return this.api.get<RawChannel>(CHANNEL(id)).then(wrapChannel);
+		return this.api
+			.get<RawChannel>(CHANNEL(id))
+			.then(wrapChannel)
+			.then(this.cacheChannel);
 	}
 
 	// https://discord.com/developers/docs/resources/channel#modify-channel
@@ -439,7 +449,10 @@ export class DiscordApi {
 	}
 
 	// https://discord.com/developers/docs/resources/channel#create-channel-invite
-	createChannelInvite(id: ChannelId, payload: CreateChannelInvitePayload = {}) {
+	createChannelInvite(
+		id: ChannelId,
+		payload: CreateChannelInvitePayload = {},
+	) {
 		this.checkPermissions(Permission.CREATE_INSTANT_INVITE);
 		const raw = unwrapCreateChannelInvitePayload(payload);
 		return this.api.post(CHANNEL_INVITES(id), raw);
@@ -521,7 +534,9 @@ export class DiscordApi {
 	) {
 		this.checkPermissions(Permission.MANAGE_EMOJIS);
 		const raw = payload && unwrapModifyGuildEmojiPayload(payload);
-		return this.api.get<RawEmoji>(GUILD_EMOJI(id, emoji), raw).then(wrapEmoji);
+		return this.api
+			.get<RawEmoji>(GUILD_EMOJI(id, emoji), raw)
+			.then(wrapEmoji);
 	}
 
 	// https://discord.com/developers/docs/resources/emoji#delete-guild-emoji
@@ -604,7 +619,11 @@ export class DiscordApi {
 	}
 
 	// https://discord.com/developers/docs/resources/guild#add-guild-member
-	addGuildMember(id: GuildId, userId: UserId, payload: AddGuildMemberPayload) {
+	addGuildMember(
+		id: GuildId,
+		userId: UserId,
+		payload: AddGuildMemberPayload,
+	) {
 		this.checkPermissions(Permission.CREATE_INSTANT_INVITE);
 		const raw = unwrapAddGuildMemberPayload(payload);
 		return this.api
@@ -659,7 +678,11 @@ export class DiscordApi {
 	}
 
 	// https://discord.com/developers/docs/resources/guild#create-guild-ban
-	createGuildBan(id: GuildId, userId: UserId, payload?: CreateGuildBanParams) {
+	createGuildBan(
+		id: GuildId,
+		userId: UserId,
+		payload?: CreateGuildBanParams,
+	) {
 		this.checkPermissions(Permission.BAN_MEMBERS);
 		const raw = payload && unwrapCreateGuildBanParams(payload);
 		return this.api.put<void>(GUILD_BAN(id, userId), null, raw);
@@ -673,7 +696,9 @@ export class DiscordApi {
 
 	// https://discord.com/developers/docs/resources/guild#get-guild-roles
 	getGuildRoles(id: GuildId) {
-		return this.api.get<RawRole[]>(GUILD_ROLES(id)).then(x => x.map(wrapRole));
+		return this.api
+			.get<RawRole[]>(GUILD_ROLES(id))
+			.then(x => x.map(wrapRole));
 	}
 
 	// https://discord.com/developers/docs/resources/guild#create-guild-role
@@ -703,7 +728,9 @@ export class DiscordApi {
 	) {
 		this.checkPermissions(Permission.MANAGE_ROLES);
 		const raw = payload && unwrapModifyGuildRolePayload(payload);
-		return this.api.patch<RawRole>(GUILD_ROLE(id, roleId), raw).then(wrapRole);
+		return this.api
+			.patch<RawRole>(GUILD_ROLE(id, roleId), raw)
+			.then(wrapRole);
 	}
 
 	// https://discord.com/developers/docs/resources/guild#delete-guild-role
@@ -750,7 +777,10 @@ export class DiscordApi {
 	}
 
 	// https://discord.com/developers/docs/resources/guild#create-guild-integration
-	createGuildIntegration(id: GuildId, payload: CreateGuildIntegrationPayload) {
+	createGuildIntegration(
+		id: GuildId,
+		payload: CreateGuildIntegrationPayload,
+	) {
 		this.checkPermissions(Permission.MANAGE_GUILD);
 		const raw = unwrapCreateGuildIntegrationPayload(payload);
 		return this.api.post<void>(GUILD_INTEGRATIONS(id));
@@ -782,14 +812,18 @@ export class DiscordApi {
 	// https://discord.com/developers/docs/resources/guild#get-guild-widget
 	getGuildWidget(id: GuildId) {
 		this.checkPermissions(Permission.MANAGE_GUILD);
-		return this.api.get<RawGuildWidget>(GUILD_WIDGET(id)).then(wrapGuildWidget);
+		return this.api
+			.get<RawGuildWidget>(GUILD_WIDGET(id))
+			.then(wrapGuildWidget);
 	}
 
 	// https://discord.com/developers/docs/resources/guild#modify-guild-widget
 	modifyGuildWidget(id: GuildId, payload: Partial<GuildWidget>) {
 		this.checkPermissions(Permission.MANAGE_GUILD);
 		const raw = unwrapGuildWidgetPartial(payload);
-		return this.api.patch<RawGuildWidget>(GUILD(id), raw).then(wrapGuildWidget);
+		return this.api
+			.patch<RawGuildWidget>(GUILD(id), raw)
+			.then(wrapGuildWidget);
 	}
 
 	// https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
@@ -824,7 +858,9 @@ export class DiscordApi {
 
 	// https://discord.com/developers/docs/resources/invite#delete-invite
 	deleteInvite(code: InviteCode) {
-		this.checkPermissions(Permission.MANAGE_CHANNELS | Permission.MANAGE_GUILD);
+		this.checkPermissions(
+			Permission.MANAGE_CHANNELS | Permission.MANAGE_GUILD,
+		);
 		return this.api.delete<RawInvite>(INVITE(code)).then(wrapInvite);
 	}
 
@@ -839,7 +875,10 @@ export class DiscordApi {
 
 	// https://discord.com/developers/docs/resources/user#get-user
 	getUser(id: UserId) {
-		return this.api.get<RawUser>(USER(id)).then(wrapUser);
+		return this.api
+			.get<RawUser>(USER(id))
+			.then(wrapUser)
+			.then(this.cacheUser);
 	}
 
 	// https://discord.com/developers/docs/resources/user#modify-current-user
@@ -938,7 +977,9 @@ export class DiscordApi {
 
 	// https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
 	getWebhookwithToken(id: WebhookId, token: string) {
-		return this.api.get<RawWebhook>(WEBHOOK_TOKEN(id, token)).then(wrapWebhook);
+		return this.api
+			.get<RawWebhook>(WEBHOOK_TOKEN(id, token))
+			.then(wrapWebhook);
 	}
 
 	// https://discord.com/developers/docs/resources/webhook#modify-webhook
@@ -978,7 +1019,11 @@ export class DiscordApi {
 	) {
 		const rawPayload = unwrapExecuteWebhookPayload(payload);
 		const rawParams = params && unwrapExecuteWebhookParams(params);
-		return this.api.post<void>(WEBHOOK_TOKEN(id, token), rawPayload, rawParams);
+		return this.api.post<void>(
+			WEBHOOK_TOKEN(id, token),
+			rawPayload,
+			rawParams,
+		);
 	}
 
 	// https://discord.com/developers/docs/resources/webhook#execute-slackcompatible-webhook

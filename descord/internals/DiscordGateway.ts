@@ -10,26 +10,31 @@ import { MultipleEmitter } from '../../amq/async/MultipleEmitter.ts';
 import { DiscordEvent } from '../enum/DiscordEvent.ts';
 import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
 import { Intent } from '../enum/Intent.ts';
+import { Channel } from '../structure/Channel.ts';
 import { GatewayBot } from '../structure/GatewayBot.ts';
 import {
 	DispatchPayload,
 	GatewayPayload,
 	wrapGatewayPayload,
 } from '../structure/GatewayPayload.ts';
+import { Guild } from '../structure/Guild.ts';
 import {
 	IdentifyCommand,
 	unwrapIdentifyCommand,
 } from '../structure/IdentifyCommand.ts';
+import { User } from '../structure/User.ts';
 import { DiscordApi } from './DiscordApi.ts';
+import { DiscordCache } from './DiscordCache.ts';
 
 export async function createGateway(
-	api: DiscordApi,
 	token: string,
 	intents: Intent[],
+	api: DiscordApi,
+	cache: DiscordCache,
 ) {
 	const gateway = await api.gatewayBot();
 	const socket = await connectWebSocket(gateway.url);
-	const instance = new DiscordGateway(token, intents, gateway, socket);
+	const instance = new DiscordGateway(token, intents, gateway, socket, cache);
 	await instance.connect();
 	return instance;
 }
@@ -37,6 +42,7 @@ export async function createGateway(
 export class DiscordGateway {
 	private sequenceNumber: number | null = null;
 	private sessionId: string | null = null;
+
 	private readonly _onMessage = new Emitter<GatewayPayload>();
 	readonly _onDispatch = new MultipleEmitter<
 		DiscordEvent,
@@ -48,6 +54,7 @@ export class DiscordGateway {
 		private readonly intents: Intent[],
 		private readonly gateway: GatewayBot,
 		private readonly socket: WebSocket,
+		private readonly cache?: DiscordCache,
 	) {}
 
 	send<T>(payload: T) {
@@ -143,85 +150,104 @@ export class DiscordGateway {
 				this.sequenceNumber = x.s;
 
 				switch (x.t) {
-					case DiscordEvent.HELLO:
-						break;
+					// case DiscordEvent.HELLO:
+					// 	break;
 					case DiscordEvent.READY:
 						this.sessionId = x.d.sessionId;
+						this.cache?.saveUser(x.d.user);
 						break;
-					case DiscordEvent.RESUMED:
-						break;
-					case DiscordEvent.RECONNECT:
-						break;
-					case DiscordEvent.INVALID_SESSION:
-						break;
+					// case DiscordEvent.RESUMED:
+					// 	break;
+					// case DiscordEvent.RECONNECT:
+					// 	break;
+					// case DiscordEvent.INVALID_SESSION:
+					// 	break;
 					case DiscordEvent.CHANNEL_CREATE:
+						this.cache?.saveChannel(x.d);
 						break;
 					case DiscordEvent.CHANNEL_UPDATE:
+						this.cache?.saveChannel(x.d);
 						break;
 					case DiscordEvent.CHANNEL_DELETE:
+						this.cache?.removeChannel(x.d.id);
 						break;
-					case DiscordEvent.CHANNEL_PINS_UPDATE:
-						break;
+					// case DiscordEvent.CHANNEL_PINS_UPDATE:
+					// 	break;
 					case DiscordEvent.GUILD_CREATE:
+						this.cache?.saveGuild(x.d);
 						break;
 					case DiscordEvent.GUILD_UPDATE:
+						this.cache?.saveGuild(x.d);
 						break;
 					case DiscordEvent.GUILD_DELETE:
+						this.cache?.removeGuild(x.d.id);
 						break;
 					case DiscordEvent.GUILD_BAN_ADD:
+						this.cache?.saveUser(x.d.user);
 						break;
 					case DiscordEvent.GUILD_BAN_REMOVE:
+						this.cache?.saveUser(x.d.user);
 						break;
-					case DiscordEvent.GUILD_EMOJIS_UPDATE:
-						break;
-					case DiscordEvent.GUILD_INTEGRATIONS_UPDATE:
-						break;
+					// case DiscordEvent.GUILD_EMOJIS_UPDATE:
+					// 	break;
+					// case DiscordEvent.GUILD_INTEGRATIONS_UPDATE:
+					// 	break;
 					case DiscordEvent.GUILD_MEMBER_ADD:
+						if (x.d.user) {
+							this.cache?.saveUser(x.d.user);
+						}
 						break;
 					case DiscordEvent.GUILD_MEMBER_REMOVE:
+						this.cache?.saveUser(x.d.user);
 						break;
 					case DiscordEvent.GUILD_MEMBER_UPDATE:
+						this.cache?.saveUser(x.d.user);
 						break;
 					case DiscordEvent.GUILD_MEMBERS_CHUNK:
+						x.d.members
+							.filter(x => x.user)
+							.forEach(x => this.cache?.saveUser(x.user!));
 						break;
-					case DiscordEvent.GUILD_ROLE_CREATE:
-						break;
-					case DiscordEvent.GUILD_ROLE_UPDATE:
-						break;
-					case DiscordEvent.GUILD_ROLE_DELETE:
-						break;
-					case DiscordEvent.INVITE_CREATE:
-						break;
-					case DiscordEvent.INVITE_DELETE:
-						break;
+					// case DiscordEvent.GUILD_ROLE_CREATE:
+					// 	break;
+					// case DiscordEvent.GUILD_ROLE_UPDATE:
+					// 	break;
+					// case DiscordEvent.GUILD_ROLE_DELETE:
+					// 	break;
+					// case DiscordEvent.INVITE_CREATE:
+					// 	break;
+					// case DiscordEvent.INVITE_DELETE:
+					// 	break;
 					case DiscordEvent.MESSAGE_CREATE:
+						this.cache?.saveUser(x.d.author);
 						break;
-					case DiscordEvent.MESSAGE_UPDATE:
-						break;
-					case DiscordEvent.MESSAGE_DELETE:
-						break;
-					case DiscordEvent.MESSAGE_DELETE_BULK:
-						break;
-					case DiscordEvent.MESSAGE_REACTION_ADD:
-						break;
-					case DiscordEvent.MESSAGE_REACTION_REMOVE:
-						break;
-					case DiscordEvent.MESSAGE_REACTION_REMOVE_ALL:
-						break;
-					case DiscordEvent.MESSAGE_REACTION_REMOVE_EMOJI:
-						break;
-					case DiscordEvent.PRESENCE_UPDATE:
-						break;
-					case DiscordEvent.TYPING_START:
-						break;
+					// case DiscordEvent.MESSAGE_UPDATE:
+					// 	break;
+					// case DiscordEvent.MESSAGE_DELETE:
+					// 	break;
+					// case DiscordEvent.MESSAGE_DELETE_BULK:
+					// 	break;
+					// case DiscordEvent.MESSAGE_REACTION_ADD:
+					// 	break;
+					// case DiscordEvent.MESSAGE_REACTION_REMOVE:
+					// 	break;
+					// case DiscordEvent.MESSAGE_REACTION_REMOVE_ALL:
+					// 	break;
+					// case DiscordEvent.MESSAGE_REACTION_REMOVE_EMOJI:
+					// 	break;
+					// case DiscordEvent.PRESENCE_UPDATE:
+					// 	break;
+					// case DiscordEvent.TYPING_START:
+					// 	break;
 					case DiscordEvent.USER_UPDATE:
+						this.cache?.saveUser(x.d);
 						break;
-					case DiscordEvent.VOICE_STATE_UPDATE:
-						break;
-					case DiscordEvent.VOICE_SERVER_UPDATE:
-						break;
-					case DiscordEvent.WEBHOOKS_UPDATE:
-						break;
+					// case DiscordEvent.VOICE_STATE_UPDATE:
+					// 	break;
+					// case DiscordEvent.VOICE_SERVER_UPDATE:
+					// 	break;
+					// case DiscordEvent.WEBHOOKS_UPDATE:
+					// 	break;
 				}
 		}
 
