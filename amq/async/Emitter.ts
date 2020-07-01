@@ -9,6 +9,9 @@ export class Emitter<T = any> {
 
 	subscribe(listener: (data: T) => void) {
 		this.listeners.add(listener);
-		return () => this.listeners.delete(listener);
+
+		return {
+			unsubscribe: () => this.listeners.delete(listener),
+		};
 	}
 }
