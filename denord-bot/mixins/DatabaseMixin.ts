@@ -1,5 +1,5 @@
 import { Bot, BotOptions } from '../Bot.ts';
-import { Apply } from '../mixin.ts';
+import { Apply } from '../../amq/code/mixin.ts';
 import { Database } from '../mongodb.ts';
 
 export type DatabaseMixin = ReturnType<typeof databaseMixin>;
@@ -31,7 +31,8 @@ export function databaseMixin(parent: Apply<typeof Bot>) {
 		): Promise<T & { save(): Promise<void> }> {
 			const col = this.users;
 			const result =
-				(await col.col.findOne({ id })) || (await col.col.insertOne({ id }));
+				(await col.col.findOne({ id })) ||
+				(await col.col.insertOne({ id }));
 
 			const { _id, ...user } = result;
 

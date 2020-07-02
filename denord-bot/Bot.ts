@@ -26,17 +26,17 @@ type Middleware<T extends Bot> = (
 	bot: T,
 ) => Promise<boolean> | boolean;
 
-type Command<T extends Bot> = (
-	message: BotMessage,
-	bot: T,
-	text: string,
-) => Promise<any>;
+type Command<T extends Bot> = (message: BotMessage, bot: T) => Promise<any>;
 
 export class Bot {
 	protected readonly _middleware: Array<Middleware<Bot>> = [];
 	protected readonly _commands = new Map<string, Command<Bot>>();
 	protected readonly _alias = new Map<string, string>();
 	private client: DiscordClient | null = null;
+
+	get api() {
+		return this.client?.api;
+	}
 
 	constructor(protected readonly options: BotOptions) {}
 
@@ -179,7 +179,7 @@ export class Bot {
 		}
 
 		if (run) {
-			return run(message, this, content);
+			return run(message, this);
 		}
 
 		return false;

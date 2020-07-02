@@ -1,7 +1,7 @@
+import { User } from '../../denord/structure/User.ts';
 import { Bot } from '../Bot.ts';
-import { ExtendedMessage } from '../discord/Message.ts';
-import { ExtendedUser } from '../discord/User.ts';
-import { Apply } from '../mixin.ts';
+import { Apply } from '../../amq/code/mixin.ts';
+import { BotMessage } from '../structure/Message.ts';
 import { randomItem } from '../util/array.ts';
 import { random } from '../util/math.ts';
 import { DatabaseMixin, DatabaseMixinOptions } from './DatabaseMixin.ts';
@@ -65,7 +65,7 @@ export function triviaMixin(
 		}
 
 		async trivia(
-			message: ExtendedMessage,
+			message: BotMessage,
 			type: PointType,
 			list: Question[],
 			{
@@ -97,23 +97,35 @@ export function triviaMixin(
 					? minSeconds
 					: factor(topPoints, diff, maxSeconds, minSeconds + 1);
 
-			const answerCount = factor(topPoints, userPoints, maxAnswers, minAnswers);
+			const answerCount = factor(
+				topPoints,
+				userPoints,
+				maxAnswers,
+				minAnswers,
+			);
 			const answers = this.getFakeAnswers(list, answerCount - 1, index);
 			const rightAnswerPosition = random(answerCount - 1);
 
-			await this.startTrivia(message, target, rightAnswerPosition + 1, seconds);
+			await this.startTrivia(
+				message,
+				target,
+				rightAnswerPosition + 1,
+				seconds,
+			);
 			answers.splice(rightAnswerPosition, 0, answer);
 
 			return {
-				options: answers.map((answer, index) => `${index + 1} - ${answer}`),
+				options: answers.map(
+					(answer, index) => `${index + 1} - ${answer}`,
+				),
 				question,
 				seconds,
 			};
 		}
 
 		private async startTrivia(
-			message: ExtendedMessage,
-			user: ExtendedUser,
+			message: BotMessage,
+			user: User,
 			answer: number,
 			timeout: number,
 		) {
@@ -138,7 +150,7 @@ export function triviaMixin(
 			return id;
 		}
 
-		private async endTrivia(user: ExtendedUser, id: number) {}
+		private async endTrivia(user: User, id: number) {}
 
 		private getFakeAnswers(
 			list: Question[],

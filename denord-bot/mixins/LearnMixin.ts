@@ -1,5 +1,5 @@
 import { Bot } from '../Bot.ts';
-import { Apply } from '../mixin.ts';
+import { Apply } from '../../amq/code/mixin.ts';
 import { randomItem } from '../util/array.ts';
 import { DatabaseMixin } from './DatabaseMixin.ts';
 

@@ -1,5 +1,6 @@
+import { Message } from '../../denord/mod.ts';
 import { Bot, BotOptions } from '../Bot.ts';
-import { ExtendedMessage } from '../discord/Message.ts';
+import { BotMessage } from '../structure/Message.ts';
 import { randomItem } from '../util/array.ts';
 
 export type MessagesMixin = ReturnType<typeof messagesMixin>;
@@ -20,7 +21,7 @@ export function messagesMixin(parent: typeof Bot) {
 			super(options);
 		}
 
-		async hear(message: ExtendedMessage): Promise<boolean | ExtendedMessage> {
+		async hear(message: BotMessage): Promise<boolean | Message> {
 			const result = await super.hear(message);
 
 			if (result || message.author.bot || !message.isMentioned) {

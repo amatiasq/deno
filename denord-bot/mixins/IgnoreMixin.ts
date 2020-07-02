@@ -1,9 +1,8 @@
-import { UserPayload } from 'https://raw.githubusercontent.com/Skillz4Killz/Discordeno/v5/types/guild.ts';
-
+import { User } from '../../denord/mod.ts';
 import { Bot } from '../Bot.ts';
-import { ExtendedMessage } from '../discord/Message.ts';
-import { Apply } from '../mixin.ts';
+import { Apply } from '../../amq/code/mixin.ts';
 import { Collection } from '../mongodb.ts';
+import { BotMessage } from '../structure/Message.ts';
 import { DatabaseMixin, UserSchema } from './DatabaseMixin.ts';
 
 export type IgnoreMixin = ReturnType<typeof ignoreMixin>;
@@ -17,7 +16,7 @@ export function ignoreMixin(parent: Apply<typeof Bot, DatabaseMixin>) {
 		private readonly ignoreCache = new Map<string, boolean>();
 		protected readonly users!: Collection<IgnorableUserSchema>;
 
-		async ignore({ id }: UserPayload) {
+		async ignore({ id }: User) {
 			const user = await this.getUser<IgnorableUserSchema>(id);
 			// const wasIgnoring = user.ignore;
 
@@ -30,7 +29,7 @@ export function ignoreMixin(parent: Apply<typeof Bot, DatabaseMixin>) {
 			return user.ignore;
 		}
 
-		async isIgnoring({ id }: UserPayload) {
+		async isIgnoring({ id }: User) {
 			if (!this.ignoreCache.has(id)) {
 				const user = await this.getUser<IgnorableUserSchema>(id);
 				this.ignoreCache.set(id, user.ignore || false);
@@ -39,7 +38,7 @@ export function ignoreMixin(parent: Apply<typeof Bot, DatabaseMixin>) {
 			return Boolean(this.ignoreCache.get(id));
 		}
 
-		async hear(message: ExtendedMessage) {
+		async hear(message: BotMessage) {
 			if (await this.isIgnoring(message.author)) {
 				return false;
 			}

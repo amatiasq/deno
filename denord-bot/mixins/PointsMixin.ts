@@ -1,7 +1,7 @@
 import { Bot } from '../Bot.ts';
-import { ExtendedUser } from '../discord/User.ts';
-import { Apply } from '../mixin.ts';
+import { Apply } from '../../amq/code/mixin.ts';
 import { DatabaseMixin } from './DatabaseMixin.ts';
+import { User } from '../../denord/structure/User.ts';
 
 const MILLISECONDS_IN_SECONDS = 1000;
 const SECONDS_IN_MINUTES = 60;
@@ -43,8 +43,11 @@ export function pointsMixin(parent: Apply<typeof Bot, DatabaseMixin>) {
 			]);
 		}
 
-		async getPoints(type: PointType, user: ExtendedUser) {
-			const entry = await this.points.col.findOne({ type, user: user.id });
+		async getPoints(type: PointType, user: User) {
+			const entry = await this.points.col.findOne({
+				type,
+				user: user.id,
+			});
 			return entry ? entry.points : 0;
 		}
 

@@ -4,7 +4,7 @@ import {
 	DiscordClient,
 } from '../../denord/mod.ts';
 
-export type ExtendedChannel = ReturnType<typeof wrapChannel>;
+export type BotChannel = ReturnType<typeof wrapChannel>;
 
 export function wrapChannel(client: DiscordClient, channel: Channel) {
 	return {
