@@ -10,19 +10,16 @@ import { MultipleEmitter } from '../../amq/async/MultipleEmitter.ts';
 import { DiscordEvent } from '../enum/DiscordEvent.ts';
 import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
 import { Intent } from '../enum/Intent.ts';
-import { Channel } from '../structure/Channel.ts';
 import { GatewayBot } from '../structure/GatewayBot.ts';
 import {
 	DispatchPayload,
 	GatewayPayload,
 	wrapGatewayPayload,
 } from '../structure/GatewayPayload.ts';
-import { Guild } from '../structure/Guild.ts';
 import {
 	IdentifyCommand,
 	unwrapIdentifyCommand,
 } from '../structure/IdentifyCommand.ts';
-import { User } from '../structure/User.ts';
 import { DiscordApi } from './DiscordApi.ts';
 import { DiscordCache } from './DiscordCache.ts';
 
@@ -138,8 +135,10 @@ export class DiscordGateway {
 			case GatewayOpCode.Heartbeat:
 				break;
 			case GatewayOpCode.Reconnect:
-				break;
+				console.log('Reconnect');
 			case GatewayOpCode.InvalidSession:
+				console.log('Invalid Session');
+				this.reconnect();
 				break;
 			case GatewayOpCode.Hello:
 				this.sendHeartbeat(x.d.heartbeatInterval);
@@ -268,6 +267,8 @@ export class DiscordGateway {
 
 		this.sendHeartbeat(interval);
 	}
+
+	private async reconnect() {}
 }
 
 // TODO: If a client does not receive a heartbeat ack between its attempts at sending heartbeats, it should immediately terminate the connection with a non-1000 close code, reconnect, and attempt to resume.
