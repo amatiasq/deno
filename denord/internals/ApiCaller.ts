@@ -1,4 +1,5 @@
 import { RequestMethod } from './RequestMethod.ts';
+import { HttpStatus } from '../enum/HttpStatus.ts';
 
 export type RequestBody = {};
 export type QueryParams = {};
@@ -14,9 +15,23 @@ export class ApiCaller {
 		method: RequestMethod,
 		url: string,
 		body?: RequestBody | null,
+	): Promise<T>;
+	async request<T extends void>(
+		method: RequestMethod,
+		url: string,
+		body?: RequestBody | null,
+	): Promise<void>;
+	async request<T>(
+		method: RequestMethod,
+		url: string,
+		body?: RequestBody | null,
 	) {
 		const request = createRequest(this.authorization, method, url, body);
 		const response = await fetch(request);
+
+		if (response.status === HttpStatus.NO_CONTENT) {
+			return;
+		}
 
 		try {
 			const json = await response.json();
