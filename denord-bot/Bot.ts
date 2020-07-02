@@ -180,6 +180,7 @@ export class Bot {
 		}
 
 		if (run) {
+			message.clean = content;
 			return run(message, this);
 		}
 
