@@ -1,10 +1,10 @@
 import { randomItem } from '../../amq/array.ts';
 import { Applied } from '../../amq/code/mixin.ts';
+import { normalize } from '../../amq/string.ts';
 import {
 	Bot,
 	BotMessage,
 	DatabaseMixin,
-	normalize,
 	splitWords,
 	trim,
 	UserSchema,

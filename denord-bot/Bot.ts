@@ -1,3 +1,4 @@
+import { padLeft } from '../amq/string.ts';
 import { DiscordClient } from '../denord/DiscordClient.ts';
 import createClient, {
 	DiscordEvent,
@@ -7,7 +8,7 @@ import createClient, {
 } from '../denord/mod.ts';
 import { BotMessage, wrapBotMessage } from './structure/Message.ts';
 import { logOnce } from './util/log.ts';
-import { padLeft, removeStart, stringish } from './util/string.ts';
+import { removeStart, stringish } from './util/string.ts';
 
 const noop = () => {};
 

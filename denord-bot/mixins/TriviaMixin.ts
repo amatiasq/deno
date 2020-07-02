@@ -1,9 +1,9 @@
+import { randomItem } from '../../amq/array.ts';
+import { Apply } from '../../amq/code/mixin.ts';
+import { random } from '../../amq/math.ts';
 import { User } from '../../denord/structure/User.ts';
 import { Bot } from '../Bot.ts';
-import { Apply } from '../../amq/code/mixin.ts';
 import { BotMessage } from '../structure/Message.ts';
-import { randomItem } from '../util/array.ts';
-import { random } from '../util/math.ts';
 import { DatabaseMixin, DatabaseMixinOptions } from './DatabaseMixin.ts';
 import { MessagesMixin, MessagesMixinOptions } from './MessagesMixin.ts';
 import { PointsMixin, PointType } from './PointsMixin.ts';

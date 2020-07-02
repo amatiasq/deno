@@ -2,10 +2,13 @@
   "scripts": {
     "bots": {
       "cmd": "deno run ./bots/main.ts",
-      "desc": "Start the bots"
+      "desc": "Start the bots",
+      "unstable": true
     }
   },
   "allow": [
+    "write",
+    "plugin",
     "read",
     "net"
   ]

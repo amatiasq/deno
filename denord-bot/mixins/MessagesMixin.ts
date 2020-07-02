@@ -1,7 +1,7 @@
 import { Message } from '../../denord/mod.ts';
 import { Bot, BotOptions } from '../Bot.ts';
 import { BotMessage } from '../structure/Message.ts';
-import { randomItem } from '../util/array.ts';
+import { randomItem } from '../../amq/array.ts';
 
 export type MessagesMixin = ReturnType<typeof messagesMixin>;
 

@@ -18,6 +18,7 @@ export function applyCommands(
 	bot.command('di ', async message => message.channel.send(message.clean));
 
 	bot.alias('help', 'ayuda');
+	bot.alias('que sabes hacer', 'ayuda');
 	bot.alias('hay algun mensaje para', 'algun mensaje para');
 	bot.command('hola', async message =>
 		message.channel.send(`Hola, soy ${bot.name}`),
