@@ -1,103 +1,163 @@
 import { DiscordEvent } from '../enum/DiscordEvent.ts';
 import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
-import { integer } from '../internals/type-aliases.ts';
+import { integer, UserId } from '../internals/type-aliases.ts';
 import { RawGatewayPayload } from '../raw/RawGatewayPayload.ts';
-import { Channel, wrapChannel } from './Channel.ts';
+import { RawUser } from '../raw/RawUser.ts';
+import { Channel, unwrapChannel, wrapChannel } from './Channel.ts';
 import {
 	ChannelPinsUpdateEvent,
+	unwrapChannelPinsUpdateEvent,
 	wrapChannelPinsUpdateEvent,
 } from './ChannelPinsUpdateEvent.ts';
-import { Guild, wrapGuild } from './Guild.ts';
-import { GuildBanAddEvent, wrapGuildBanAddEvent } from './GuildBanAddEvent.ts';
+import { Guild, unwrapGuild, wrapGuild } from './Guild.ts';
+import {
+	GuildBanAddEvent,
+	unwrapGuildBanAddEvent,
+	wrapGuildBanAddEvent,
+} from './GuildBanAddEvent.ts';
 import {
 	GuildBanRemoveEvent,
+	unwrapGuildBanRemoveEvent,
 	wrapGuildBanRemoveEvent,
 } from './GuildBanRemoveEvent.ts';
-import { GuildCreateEvent, wrapGuildCreateEvent } from './GuildCreateEvent.ts';
+import {
+	GuildCreateEvent,
+	unwrapGuildCreateEvent,
+	wrapGuildCreateEvent,
+} from './GuildCreateEvent.ts';
 import {
 	GuildEmojisUpdateEvent,
+	unwrapGuildEmojisUpdateEvent,
 	wrapGuildEmojisUpdateEvent,
 } from './GuildEmojisUpdateEvent.ts';
 import {
 	GuildIntegrationsUpdateEvent,
+	unwrapGuildIntegrationsUpdateEvent,
 	wrapGuildIntegrationsUpdateEvent,
 } from './GuildIntegrationsUpdateEvent.ts';
 import {
 	GuildMemberAddEvent,
+	unwrapGuildMemberAddEvent,
 	wrapGuildMemberAddEvent,
 } from './GuildMemberAddEvent.ts';
 import {
 	GuildMemberRemoveEvent,
+	unwrapGuildMemberRemoveEvent,
 	wrapGuildMemberRemoveEvent,
 } from './GuildMemberRemoveEvent.ts';
 import {
 	GuildMembersChunkEvent,
+	unwrapGuildMembersChunkEvent,
 	wrapGuildMembersChunkEvent,
 } from './GuildMembersChunkEvent.ts';
 import {
 	GuildMemberUpdateEvent,
+	unwrapGuildMemberUpdateEvent,
 	wrapGuildMemberUpdateEvent,
 } from './GuildMemberUpdateEvent.ts';
 import {
 	GuildRoleCreateEvent,
+	unwrapGuildRoleCreateEvent,
 	wrapGuildRoleCreateEvent,
 } from './GuildRoleCreateEvent.ts';
 import {
 	GuildRoleDeleteEvent,
+	unwrapGuildRoleDeleteEvent,
 	wrapGuildRoleDeleteEvent,
 } from './GuildRoleDeleteEvent.ts';
 import {
 	GuildRoleUpdateEvent,
+	unwrapGuildRoleUpdateEvent,
 	wrapGuildRoleUpdateEvent,
 } from './GuildRoleUpdateEvent.ts';
-import { HelloEvent, wrapHelloEvent } from './HelloEvent.ts';
+import { HelloEvent, unwrapHelloEvent, wrapHelloEvent } from './HelloEvent.ts';
+import {
+	IdentifyCommand,
+	unwrapIdentifyCommand,
+	wrapIdentifyCommand,
+} from './IdentifyCommand.ts';
 import {
 	InviteCreateEvent,
+	unwrapInviteCreateEvent,
 	wrapInviteCreateEvent,
 } from './InviteCreateEvent.ts';
 import {
 	InviteDeleteEvent,
+	unwrapInviteDeleteEvent,
 	wrapInviteDeleteEvent,
 } from './InviteDeleteEvent.ts';
-import { Message, wrapMessage } from './Message.ts';
+import { Message, unwrapMessage, wrapMessage } from './Message.ts';
 import {
 	MessageDeleteBulkEvent,
+	unwrapMessageDeleteBulkEvent,
 	wrapMessageDeleteBulkEvent,
 } from './MessageDeleteBulkEvent.ts';
 import {
 	MessageDeleteEvent,
+	unwrapMessageDeleteEvent,
 	wrapMessageDeleteEvent,
 } from './MessageDeleteEvent.ts';
 import {
 	MessageReactionAddEvent,
+	unwrapMessageReactionAddEvent,
 	wrapMessageReactionAddEvent,
 } from './MessageReactionAddEvent.ts';
 import {
 	MessageReactionRemoveAllEvent,
+	unwrapMessageReactionRemoveAllEvent,
 	wrapMessageReactionRemoveAllEvent,
 } from './MessageReactionRemoveAllEvent.ts';
 import {
 	MessageReactionRemoveEmojiEvent,
+	unwrapMessageReactionRemoveEmojiEvent,
 	wrapMessageReactionRemoveEmojiEvent,
 } from './MessageReactionRemoveEmojiEvent.ts';
 import {
 	MessageReactionRemoveEvent,
+	unwrapMessageReactionRemoveEvent,
 	wrapMessageReactionRemoveEvent,
 } from './MessageReactionRemoveEvent.ts';
 import {
 	PresenceUpdateEvent,
+	unwrapPresenceUpdateEvent,
 	wrapPresenceUpdateEvent,
 } from './PresenceUpdateEvent.ts';
-import { ReadyEvent, wrapReadyEvent } from './ReadyEvent.ts';
-import { TypingStartEvent, wrapTypingStartEvent } from './TypingStartEvent.ts';
-import { UnavailableGuild, wrapUnavailableGuild } from './UnavailableGuild.ts';
-import { User, wrapUser } from './User.ts';
+import { ReadyEvent, unwrapReadyEvent, wrapReadyEvent } from './ReadyEvent.ts';
 import {
+	RequestGuildMembersCommand,
+	unwrapRequestGuildMembersCommand,
+	wrapRequestGuildMembersCommand,
+} from './RequestGuildMembersCommand.ts';
+import {
+	ResumeCommand,
+	unwrapResumeCommand,
+	wrapResumeCommand,
+} from './ResumeCommand.ts';
+import {
+	TypingStartEvent,
+	unwrapTypingStartEvent,
+	wrapTypingStartEvent,
+} from './TypingStartEvent.ts';
+import {
+	UnavailableGuild,
+	unwrapUnavailableGuild,
+	wrapUnavailableGuild,
+} from './UnavailableGuild.ts';
+import {
+	unwrapUser,
+	unwrapUserPartial,
+	User,
+	wrapUser,
+	wrapUserPartial,
+} from './User.ts';
+import {
+	unwrapVoiceServerUpdateEvent,
 	VoiceServerUpdateEvent,
 	wrapVoiceServerUpdateEvent,
 } from './VoiceServerUpdateEvent.ts';
-import { VoiceState, wrapVoiceState } from './VoiceState.ts';
+import { unwrapVoiceState, VoiceState, wrapVoiceState } from './VoiceState.ts';
 import {
+	unwrapWebhookUpdateEvent,
 	WebhookUpdateEvent,
 	wrapWebhookUpdateEvent,
 } from './WebhookUpdateEvent.ts';
@@ -385,49 +445,49 @@ interface GatewayPayload_Heartbeat {
 interface GatewayPayload_Identify {
 	op: GatewayOpCode.Identify;
 	t: null;
-	d: unknown;
+	d: IdentifyCommand;
 	s: null;
 }
 
 interface GatewayPayload_PresenceUpdate {
 	op: GatewayOpCode.PresenceUpdate;
 	t: null;
-	d: unknown;
+	d: Partial<User> & { id: UserId };
 	s: null;
 }
 
 interface GatewayPayload_VoiceStateUpdate {
 	op: GatewayOpCode.VoiceStateUpdate;
 	t: null;
-	d: unknown;
+	d: VoiceState;
 	s: null;
 }
 
 interface GatewayPayload_Resume {
 	op: GatewayOpCode.Resume;
 	t: null;
-	d: unknown;
+	d: ResumeCommand;
 	s: null;
 }
 
 interface GatewayPayload_Reconnect {
 	op: GatewayOpCode.Reconnect;
 	t: null;
-	d: unknown;
+	d: null;
 	s: null;
 }
 
 interface GatewayPayload_RequestGuildMembers {
 	op: GatewayOpCode.RequestGuildMembers;
 	t: null;
-	d: unknown;
+	d: RequestGuildMembersCommand;
 	s: null;
 }
 
 interface GatewayPayload_InvalidSession {
 	op: GatewayOpCode.InvalidSession;
 	t: null;
-	d: unknown;
+	d: boolean;
 	s: null;
 }
 
@@ -441,7 +501,7 @@ interface GatewayPayload_Hello {
 interface GatewayPayload_HeartbeatAck {
 	op: GatewayOpCode.HeartbeatAck;
 	t: null;
-	d: unknown;
+	d: null;
 	s: null;
 }
 
@@ -496,6 +556,11 @@ export type GatewayPayload =
 	| GatewayPayload_Hello
 	| GatewayPayload_HeartbeatAck;
 
+export type GatewayPayloadData<T extends GatewayOpCode> = Extract<
+	GatewayPayload,
+	{ op: T }
+>['d'];
+
 export type DispatchPayload<T extends DiscordEvent> = Extract<
 	GatewayPayload,
 	{ t: T }
@@ -506,17 +571,20 @@ export function wrapGatewayPayload(x: RawGatewayPayload): GatewayPayload {
 		case GatewayOpCode.Heartbeat:
 			return x;
 		case GatewayOpCode.Identify:
-			return x;
+			return { ...x, d: wrapIdentifyCommand(x.d) };
 		case GatewayOpCode.PresenceUpdate:
-			return x;
+			return {
+				...x,
+				d: wrapUserPartial(x.d) as Partial<User> & { id: UserId },
+			};
 		case GatewayOpCode.VoiceStateUpdate:
-			return x;
+			return { ...x, d: wrapVoiceState(x.d) };
 		case GatewayOpCode.Resume:
-			return x;
+			return { ...x, d: wrapResumeCommand(x.d) };
 		case GatewayOpCode.Reconnect:
 			return x;
 		case GatewayOpCode.RequestGuildMembers:
-			return x;
+			return { ...x, d: wrapRequestGuildMembersCommand(x.d) };
 		case GatewayOpCode.InvalidSession:
 			return x;
 		case GatewayOpCode.Hello:
@@ -590,7 +658,10 @@ export function wrapGatewayPayload(x: RawGatewayPayload): GatewayPayload {
 				case DiscordEvent.MESSAGE_REACTION_REMOVE_ALL:
 					return { ...x, d: wrapMessageReactionRemoveAllEvent(x.d) };
 				case DiscordEvent.MESSAGE_REACTION_REMOVE_EMOJI:
-					return { ...x, d: wrapMessageReactionRemoveEmojiEvent(x.d) };
+					return {
+						...x,
+						d: wrapMessageReactionRemoveEmojiEvent(x.d),
+					};
 				case DiscordEvent.PRESENCE_UPDATE:
 					return { ...x, d: wrapPresenceUpdateEvent(x.d) };
 				case DiscordEvent.TYPING_START:
@@ -603,6 +674,121 @@ export function wrapGatewayPayload(x: RawGatewayPayload): GatewayPayload {
 					return { ...x, d: wrapVoiceServerUpdateEvent(x.d) };
 				case DiscordEvent.WEBHOOKS_UPDATE:
 					return { ...x, d: wrapWebhookUpdateEvent(x.d) };
+			}
+	}
+}
+
+export function unwrapGatewayPayload(x: GatewayPayload): RawGatewayPayload {
+	switch (x.op) {
+		case GatewayOpCode.Heartbeat:
+			return x;
+		case GatewayOpCode.Identify:
+			return { ...x, d: unwrapIdentifyCommand(x.d) };
+		case GatewayOpCode.PresenceUpdate:
+			return {
+				...x,
+				d: unwrapUserPartial(x.d) as Partial<RawUser> & { id: UserId },
+			};
+		case GatewayOpCode.VoiceStateUpdate:
+			return { ...x, d: unwrapVoiceState(x.d) };
+		case GatewayOpCode.Resume:
+			return { ...x, d: unwrapResumeCommand(x.d) };
+		case GatewayOpCode.Reconnect:
+			return x;
+		case GatewayOpCode.RequestGuildMembers:
+			return { ...x, d: unwrapRequestGuildMembersCommand(x.d) };
+		case GatewayOpCode.InvalidSession:
+			return x;
+		case GatewayOpCode.Hello:
+			return { ...x, d: unwrapHelloEvent(x.d) };
+		case GatewayOpCode.HeartbeatAck:
+			return x;
+		case GatewayOpCode.Dispatch:
+			switch (x.t) {
+				case DiscordEvent.HELLO:
+					return { ...x, d: unwrapHelloEvent(x.d) };
+				case DiscordEvent.READY:
+					return { ...x, d: unwrapReadyEvent(x.d) };
+				case DiscordEvent.RESUMED:
+					return x;
+				case DiscordEvent.RECONNECT:
+					return x;
+				case DiscordEvent.INVALID_SESSION:
+					return x;
+				case DiscordEvent.CHANNEL_CREATE:
+					return { ...x, d: unwrapChannel(x.d) };
+				case DiscordEvent.CHANNEL_UPDATE:
+					return { ...x, d: unwrapChannel(x.d) };
+				case DiscordEvent.CHANNEL_DELETE:
+					return { ...x, d: unwrapChannel(x.d) };
+				case DiscordEvent.CHANNEL_PINS_UPDATE:
+					return { ...x, d: unwrapChannelPinsUpdateEvent(x.d) };
+				case DiscordEvent.GUILD_CREATE:
+					return { ...x, d: unwrapGuildCreateEvent(x.d) };
+				case DiscordEvent.GUILD_UPDATE:
+					return { ...x, d: unwrapGuild(x.d) };
+				case DiscordEvent.GUILD_DELETE:
+					return { ...x, d: unwrapUnavailableGuild(x.d) };
+				case DiscordEvent.GUILD_BAN_ADD:
+					return { ...x, d: unwrapGuildBanAddEvent(x.d) };
+				case DiscordEvent.GUILD_BAN_REMOVE:
+					return { ...x, d: unwrapGuildBanRemoveEvent(x.d) };
+				case DiscordEvent.GUILD_EMOJIS_UPDATE:
+					return { ...x, d: unwrapGuildEmojisUpdateEvent(x.d) };
+				case DiscordEvent.GUILD_INTEGRATIONS_UPDATE:
+					return { ...x, d: unwrapGuildIntegrationsUpdateEvent(x.d) };
+				case DiscordEvent.GUILD_MEMBER_ADD:
+					return { ...x, d: unwrapGuildMemberAddEvent(x.d) };
+				case DiscordEvent.GUILD_MEMBER_REMOVE:
+					return { ...x, d: unwrapGuildMemberRemoveEvent(x.d) };
+				case DiscordEvent.GUILD_MEMBER_UPDATE:
+					return { ...x, d: unwrapGuildMemberUpdateEvent(x.d) };
+				case DiscordEvent.GUILD_MEMBERS_CHUNK:
+					return { ...x, d: unwrapGuildMembersChunkEvent(x.d) };
+				case DiscordEvent.GUILD_ROLE_CREATE:
+					return { ...x, d: unwrapGuildRoleCreateEvent(x.d) };
+				case DiscordEvent.GUILD_ROLE_UPDATE:
+					return { ...x, d: unwrapGuildRoleUpdateEvent(x.d) };
+				case DiscordEvent.GUILD_ROLE_DELETE:
+					return { ...x, d: unwrapGuildRoleDeleteEvent(x.d) };
+				case DiscordEvent.INVITE_CREATE:
+					return { ...x, d: unwrapInviteCreateEvent(x.d) };
+				case DiscordEvent.INVITE_DELETE:
+					return { ...x, d: unwrapInviteDeleteEvent(x.d) };
+				case DiscordEvent.MESSAGE_CREATE:
+					return { ...x, d: unwrapMessage(x.d) };
+				case DiscordEvent.MESSAGE_UPDATE:
+					return { ...x, d: unwrapMessage(x.d) };
+				case DiscordEvent.MESSAGE_DELETE:
+					return { ...x, d: unwrapMessageDeleteEvent(x.d) };
+				case DiscordEvent.MESSAGE_DELETE_BULK:
+					return { ...x, d: unwrapMessageDeleteBulkEvent(x.d) };
+				case DiscordEvent.MESSAGE_REACTION_ADD:
+					return { ...x, d: unwrapMessageReactionAddEvent(x.d) };
+				case DiscordEvent.MESSAGE_REACTION_REMOVE:
+					return { ...x, d: unwrapMessageReactionRemoveEvent(x.d) };
+				case DiscordEvent.MESSAGE_REACTION_REMOVE_ALL:
+					return {
+						...x,
+						d: unwrapMessageReactionRemoveAllEvent(x.d),
+					};
+				case DiscordEvent.MESSAGE_REACTION_REMOVE_EMOJI:
+					return {
+						...x,
+						d: unwrapMessageReactionRemoveEmojiEvent(x.d),
+					};
+				case DiscordEvent.PRESENCE_UPDATE:
+					return { ...x, d: unwrapPresenceUpdateEvent(x.d) };
+				case DiscordEvent.TYPING_START:
+					return { ...x, d: unwrapTypingStartEvent(x.d) };
+				case DiscordEvent.USER_UPDATE:
+					return { ...x, d: unwrapUser(x.d) };
+				case DiscordEvent.VOICE_STATE_UPDATE:
+					return { ...x, d: unwrapVoiceState(x.d) };
+				case DiscordEvent.VOICE_SERVER_UPDATE:
+					return { ...x, d: unwrapVoiceServerUpdateEvent(x.d) };
+				case DiscordEvent.WEBHOOKS_UPDATE:
+					return { ...x, d: unwrapWebhookUpdateEvent(x.d) };
 			}
 	}
 }

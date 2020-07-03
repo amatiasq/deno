@@ -1,6 +1,6 @@
 import { DiscordEvent } from '../enum/DiscordEvent.ts';
 import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
-import { integer } from '../internals/type-aliases.ts';
+import { integer, UserId } from '../internals/type-aliases.ts';
 import { RawChannel } from './RawChannel.ts';
 import { RawChannelPinsUpdateEvent } from './RawChannelPinsUpdateEvent.ts';
 import { RawGuild } from './RawGuild.ts';
@@ -9,14 +9,15 @@ import { RawGuildBanRemoveEvent } from './RawGuildBanRemoveEvent.ts';
 import { RawGuildCreateEvent } from './RawGuildCreateEvent.ts';
 import { RawGuildEmojisUpdateEvent } from './RawGuildEmojisUpdateEvent.ts';
 import { RawGuildIntegrationsUpdateEvent } from './RawGuildIntegrationsUpdateEvent.ts';
+import { RawGuildMemberAddEvent } from './RawGuildMemberAddEvent.ts';
 import { RawGuildMemberRemoveEvent } from './RawGuildMemberRemoveEvent.ts';
 import { RawGuildMembersChunkEvent } from './RawGuildMembersChunkEvent.ts';
 import { RawGuildMemberUpdateEvent } from './RawGuildMemberUpdateEvent.ts';
 import { RawGuildRoleCreateEvent } from './RawGuildRoleCreateEvent.ts';
 import { RawGuildRoleDeleteEvent } from './RawGuildRoleDeleteEvent.ts';
 import { RawGuildRoleUpdateEvent } from './RawGuildRoleUpdateEvent.ts';
-import { RawGuildMemberAddEvent } from './RawGuildMemberAddEvent.ts';
 import { RawHelloEvent } from './RawHelloEvent.ts';
+import { RawIdentifyCommand } from './RawIdentifyCommand.ts';
 import { RawInviteCreateEvent } from './RawInviteCreateEvent.ts';
 import { RawInviteDeleteEvent } from './RawInviteDeleteEvent.ts';
 import { RawMessage } from './RawMessage.ts';
@@ -28,6 +29,8 @@ import { RawMessageReactionRemoveEmojiEvent } from './RawMessageReactionRemoveEm
 import { RawMessageReactionRemoveEvent } from './RawMessageReactionRemoveEvent.ts';
 import { RawPresenceUpdateEvent } from './RawPresenceUpdateEvent.ts';
 import { RawReadyEvent } from './RawReadyEvent.ts';
+import { RawRequestGuildMembersCommand } from './RawRequestGuildMembersCommand.ts';
+import { RawResumeCommand } from './RawResumeCommand.ts';
 import { RawTypingStartEvent } from './RawTypingStartEvent.ts';
 import { RawUnavailableGuild } from './RawUnavailableGuild.ts';
 import { RawUser } from './RawUser.ts';
@@ -318,49 +321,49 @@ interface RawGatewayPayload_Heartbeat {
 interface RawGatewayPayload_Identify {
 	op: GatewayOpCode.Identify;
 	t: null;
-	d: unknown;
+	d: RawIdentifyCommand;
 	s: null;
 }
 
 interface RawGatewayPayload_PresenceUpdate {
 	op: GatewayOpCode.PresenceUpdate;
 	t: null;
-	d: unknown;
+	d: Partial<RawUser> & { id: UserId };
 	s: null;
 }
 
 interface RawGatewayPayload_VoiceStateUpdate {
 	op: GatewayOpCode.VoiceStateUpdate;
 	t: null;
-	d: unknown;
+	d: RawVoiceState;
 	s: null;
 }
 
 interface RawGatewayPayload_Resume {
 	op: GatewayOpCode.Resume;
 	t: null;
-	d: unknown;
+	d: RawResumeCommand;
 	s: null;
 }
 
 interface RawGatewayPayload_Reconnect {
 	op: GatewayOpCode.Reconnect;
 	t: null;
-	d: unknown;
+	d: null;
 	s: null;
 }
 
 interface RawGatewayPayload_RequestGuildMembers {
 	op: GatewayOpCode.RequestGuildMembers;
 	t: null;
-	d: unknown;
+	d: RawRequestGuildMembersCommand;
 	s: null;
 }
 
 interface RawGatewayPayload_InvalidSession {
 	op: GatewayOpCode.InvalidSession;
 	t: null;
-	d: unknown;
+	d: boolean;
 	s: null;
 }
 
@@ -374,7 +377,7 @@ interface RawGatewayPayload_Hello {
 interface RawGatewayPayload_HeartbeatAck {
 	op: GatewayOpCode.HeartbeatAck;
 	t: null;
-	d: unknown;
+	d: null;
 	s: null;
 }
 
