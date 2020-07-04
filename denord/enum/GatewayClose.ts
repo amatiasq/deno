@@ -1,4 +1,4 @@
-export enum GatewayClose {
+export enum GatewayCloseCode {
 	/** We're not sure what went wrong. Try reconnecting? */
 	UNKNOWN_ERROR = 4000,
 	/** You sent an invalid Gateway opcode or an invalid payload for an opcode. Don't do that! */

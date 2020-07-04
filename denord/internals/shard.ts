@@ -1,24 +1,26 @@
-import { IdentifyCommand } from './../structure/IdentifyCommand.ts';
 import {
 	connectWebSocket,
 	isWebSocketCloseEvent,
 	WebSocket,
 } from 'https://deno.land/std@0.59.0/ws/mod.ts';
-import {
-	ShardMessageType,
-	ShardPayload,
-	ShardMessage,
-} from './ShardMessage.ts';
+
+import { wait } from '../../amq/promise.ts';
+import { DiscordEvent } from '../enum/DiscordEvent.ts';
+import { GatewayCloseCode } from '../enum/GatewayClose.ts';
+import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
 import {
 	GatewayPayload,
 	GatewayPayloadData,
 	unwrapGatewayPayload,
 	wrapGatewayPayload,
 } from '../structure/GatewayPayload.ts';
-import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
-import { wait } from '../../amq/promise.ts';
-import { DiscordEvent } from '../enum/DiscordEvent.ts';
-import { GatewayClose } from '../enum/GatewayClose.ts';
+import { IdentifyCommand } from '../structure/IdentifyCommand.ts';
+import {
+	ShardMessage,
+	ShardMessageType,
+	ShardPayload,
+} from './ShardMessage.ts';
+import { RpcErrorCode } from '../enum/RpcErrorCode.ts';
 
 const parent = createParent();
 const discord = createDiscordSocket();
@@ -86,7 +88,7 @@ function createDiscordSocket() {
 	};
 
 	function sendOp<T extends GatewayOpCode>(op: T, d: GatewayPayloadData<T>) {
-		const payload = { op, d, t: null, s: null } as GatewayPayload;
+		return send({ op, d, t: null, s: null } as GatewayPayload);
 	}
 
 	function send(payload: GatewayPayload) {
@@ -114,9 +116,11 @@ function createDiscordSocket() {
 				onSocketClose(message);
 			} else if (typeof message === 'string') {
 				const json = JSON.parse(message);
-				const payload = wrapGatewayPayload(json());
+				const payload = wrapGatewayPayload(json);
 				onSocketMessage(payload);
-				parent.send(ShardMessageType.DISCORD_MESSAGE, { payload });
+				parent.send(ShardMessageType.DISCORD_MESSAGE, {
+					payload: json,
+				});
 			}
 		}
 	}
@@ -139,36 +143,37 @@ function createDiscordSocket() {
 		sendHeartbeat(interval);
 	}
 
-	function onSocketClose(x: { code: GatewayClose }) {
+	function onSocketClose(x: { code: GatewayCloseCode | RpcErrorCode }) {
 		parent.notifyStatus(false);
 		log('Socket closed', x);
 
 		switch (x.code) {
 			// These error codes should just crash the projects
-			case GatewayClose.AUTHENTICATION_FAILED:
-			case GatewayClose.ALREADY_AUTHENTICATED:
-			case GatewayClose.INVALID_API_VERSION:
-			case GatewayClose.INVALID_INTENTS:
-			case GatewayClose.DISALLOWED_INTENTS:
+			case GatewayCloseCode.AUTHENTICATION_FAILED:
+			case GatewayCloseCode.ALREADY_AUTHENTICATED:
+			case GatewayCloseCode.INVALID_API_VERSION:
+			case GatewayCloseCode.INVALID_INTENTS:
+			case GatewayCloseCode.DISALLOWED_INTENTS:
 				log('Unrecoverable');
 				throw new Error(
 					`Discord gateway forbids reconnection. Gateway Close Event Code: ${x.code}`,
 				);
 
 			// These error codes can not be resumed but need to reconnect from start
-			case GatewayClose.NOT_AUTHENTICATED:
-			case GatewayClose.INVALID_SEQ:
-			case GatewayClose.RATE_LIMITED:
-			case GatewayClose.SESSION_TIMED_OUT:
+			case GatewayCloseCode.NOT_AUTHENTICATED:
+			case GatewayCloseCode.INVALID_SEQ:
+			case GatewayCloseCode.RATE_LIMITED:
+			case GatewayCloseCode.SESSION_TIMED_OUT:
 				log('Restarting...');
 				return openConnection();
 
 			// Reconnect
-			case GatewayClose.UNKNOWN_ERROR:
-			case GatewayClose.UNKNOWN_OPCODE:
-			case GatewayClose.DECODE_ERROR:
-			case GatewayClose.INVALID_SHARD:
-			case GatewayClose.SHARDING_REQUIRED:
+			case RpcErrorCode.UNKNOWN_ERROR:
+			case GatewayCloseCode.UNKNOWN_ERROR:
+			case GatewayCloseCode.UNKNOWN_OPCODE:
+			case GatewayCloseCode.DECODE_ERROR:
+			case GatewayCloseCode.INVALID_SHARD:
+			case GatewayCloseCode.SHARDING_REQUIRED:
 				return resumeConnection();
 
 			default:
@@ -203,6 +208,7 @@ function createDiscordSocket() {
 				switch (x.t) {
 					case DiscordEvent.RESUMED:
 						isResumeNeeded = false;
+						log('Resumed');
 						return;
 					case DiscordEvent.READY:
 						sessionId = x.d.sessionId;

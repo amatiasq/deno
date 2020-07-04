@@ -1,13 +1,14 @@
 import { Emitter } from '../../amq/async/Emitter.ts';
 import { MultipleEmitter } from '../../amq/async/MultipleEmitter.ts';
 import { DiscordEvent } from '../enum/DiscordEvent.ts';
-import { GatewayClose } from '../enum/GatewayClose.ts';
+import { GatewayCloseCode } from '../enum/GatewayClose.ts';
 import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
 import { Intent } from '../enum/Intent.ts';
 import { GatewayBot } from '../structure/GatewayBot.ts';
 import {
 	DispatchPayload,
 	GatewayPayload,
+	wrapGatewayPayload,
 } from '../structure/GatewayPayload.ts';
 import { IdentifyCommand } from '../structure/IdentifyCommand.ts';
 import { DiscordApi } from './DiscordApi.ts';
@@ -30,7 +31,7 @@ export class DiscordGateway {
 	private readonly shards = [] as Shard[];
 	private readonly connected = new Set<Shard>();
 
-	private readonly _onClose = new Emitter<GatewayClose>();
+	private readonly _onClose = new Emitter<GatewayCloseCode>();
 	private readonly _onMessage = new Emitter<GatewayPayload>();
 	private readonly _onDispatch = new MultipleEmitter<
 		DiscordEvent,
@@ -82,7 +83,7 @@ export class DiscordGateway {
 		this.spawnShards();
 	}
 
-	onClose(listener: (code: GatewayClose) => void) {
+	onClose(listener: (code: GatewayCloseCode) => void) {
 		return this._onClose.subscribe(listener);
 	}
 
@@ -120,7 +121,10 @@ export class DiscordGateway {
 
 	private createShard(index: number) {
 		const path = new URL('./shard.ts', import.meta.url).toString();
-		const shard: Shard = new Worker(path, { type: 'module' }) as any; //, deno: true });
+		const shard: Shard = new Worker(path, {
+			type: 'module',
+			deno: true,
+		} as any) as any;
 
 		shard.id = index;
 		shard.onmessage = x => this.onShardMessage(x.data, shard);
@@ -137,7 +141,7 @@ export class DiscordGateway {
 				return this.connected.delete(shard);
 
 			case ShardMessageType.DISCORD_MESSAGE:
-				return this.processMessage(x.payload);
+				return this.processMessage(wrapGatewayPayload(x.payload));
 
 			case ShardMessageType.LOG:
 				return console.log(`[SHARD(${shard.id})]:`, ...x.values);

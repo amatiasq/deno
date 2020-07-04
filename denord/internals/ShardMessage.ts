@@ -1,5 +1,6 @@
-import { GatewayPayload } from '../structure/GatewayPayload.ts';
+import { RawGatewayPayload } from '../raw/RawGatewayPayload.ts';
 import { GatewayBot } from '../structure/GatewayBot.ts';
+import { GatewayPayload } from '../structure/GatewayPayload.ts';
 import { IdentifyCommand } from '../structure/IdentifyCommand.ts';
 
 export enum ShardMessageType {
@@ -46,7 +47,7 @@ interface ShardMessage_DISCONECTED {
 
 interface ShardMessage_PAYLOAD {
 	type: ShardMessageType.DISCORD_MESSAGE;
-	payload: GatewayPayload;
+	payload: RawGatewayPayload;
 }
 
 export type ShardMessage =
