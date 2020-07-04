@@ -20,7 +20,7 @@ import {
 	ShardMessageType,
 	ShardPayload,
 } from './ShardMessage.ts';
-import { RpcErrorCode } from '../enum/RpcErrorCode.ts';
+import { WebSocketCloseCode } from '../enum/WebSocketCloseCode.ts';
 
 const parent = createParent();
 const discord = createDiscordSocket();
@@ -143,7 +143,7 @@ function createDiscordSocket() {
 		sendHeartbeat(interval);
 	}
 
-	function onSocketClose(x: { code: GatewayCloseCode | RpcErrorCode }) {
+	function onSocketClose(x: { code: GatewayCloseCode | WebSocketCloseCode }) {
 		parent.notifyStatus(false);
 		log('Socket closed', x);
 
@@ -168,7 +168,7 @@ function createDiscordSocket() {
 				return openConnection();
 
 			// Reconnect
-			case RpcErrorCode.UNKNOWN_ERROR:
+			case WebSocketCloseCode.NORMAL_CLOSURE:
 			case GatewayCloseCode.UNKNOWN_ERROR:
 			case GatewayCloseCode.UNKNOWN_OPCODE:
 			case GatewayCloseCode.DECODE_ERROR:
