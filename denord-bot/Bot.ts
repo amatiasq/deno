@@ -1,7 +1,7 @@
-import { padLeft } from '../amq/string.ts';
-import { DiscordClient } from '../denord/DiscordClient.ts';
+import { normalize, padLeft } from '../amq/string.ts';
 import createClient, {
 	DiscordEvent,
+	DiscordClient,
 	Intent,
 	Message,
 	User,
@@ -10,8 +10,6 @@ import { BotMessage, wrapBotMessage } from './structure/Message.ts';
 import { logOnce } from './util/log.ts';
 import { removeStart, stringish } from './util/string.ts';
 
-const noop = () => {};
-
 export interface BotOptions {
 	id: string;
 	token: string;
@@ -19,7 +17,6 @@ export interface BotOptions {
 	intents: Intent[];
 	isHearBotEnabled?: boolean;
 	isHearSelfEnabled?: boolean;
-	unhandled?: (bot: Bot, message: BotMessage) => boolean | void;
 }
 
 type Middleware<T extends Bot> = (
@@ -61,12 +58,16 @@ export class Bot {
 		return this.options.names;
 	}
 
-	protected get unhandled() {
-		return this.options.unhandled || noop;
-	}
-
 	is(user: User) {
 		return user.id === this.id;
+	}
+
+	isMentionedIn(message: Message) {
+		return (
+			message.mentions.some(x => this.is(x)) ||
+			message.content.includes(this.id) ||
+			this.names.some(x => message.content.startsWith(x))
+		);
 	}
 
 	log(type: string, ...message: stringish[]) {
@@ -147,7 +148,7 @@ export class Bot {
 			return true;
 		}
 
-		if (!message.author.bot && (await this.unhandled(this, message))) {
+		if (!message.author.bot) {
 			this.log('FALLBACK(HANDLER)');
 			return true;
 		}
@@ -155,14 +156,14 @@ export class Bot {
 		return false;
 	}
 
-	protected executeCommand(message: BotMessage): Promise<boolean> | boolean {
-		let content = message.clean;
+	executeCommand(message: BotMessage): Promise<boolean> | boolean {
+		let content = normalize(message.clean);
 		let run = null;
 
 		for (const [command, handler] of this._commands) {
 			if (content.startsWith(command)) {
 				this.log(`COMMAND(${command})`, content);
-				content = removeStart(content, command);
+				content = removeStart(message.clean, command);
 				run = handler;
 				break;
 			}
@@ -172,7 +173,7 @@ export class Bot {
 			for (const [alias, command] of this._alias) {
 				if (content.startsWith(alias)) {
 					this.log(`ALIAS(${alias}=>${command})`, content);
-					content = removeStart(content, alias);
+					content = removeStart(message.clean, alias);
 					run = this._commands.get(command);
 					break;
 				}

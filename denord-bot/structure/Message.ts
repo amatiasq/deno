@@ -21,12 +21,17 @@ export async function wrapBotMessage(
 	);
 
 	const firstMention = message.mentions.find(x => !bot.is(x));
-	const isMentioned = message.mentions.some(x => bot.is(x));
+	const isMentioned = bot.isMentionedIn(message);
 	const clean = clearMessage(message, bot) || normalize(message.content);
 
 	const log = `[${datetime()}, ${guild?.name}#${channel.name}] ${
 		author.username
 	}: ${message.content}`;
+
+	console.log({
+		mentions: message.mentions,
+		isMentioned,
+	});
 
 	return {
 		...message,
