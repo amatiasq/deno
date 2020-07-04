@@ -9,7 +9,7 @@ const { MARTI_BOT_ID, MARTI_TOKEN, MONGODB_URI } = config();
 const marti = new MartiBot({
 	id: MARTI_BOT_ID,
 	token: MARTI_TOKEN,
-	names: ['marti'],
+	names: ['Martí', 'marti'],
 	isHearSelfEnabled: false,
 	isHearBotEnabled: true,
 
@@ -22,11 +22,7 @@ const marti = new MartiBot({
 	db: connectMongo(MONGODB_URI),
 
 	messages: {
-		FALLBACK: 'HOLA',
-	},
-
-	unhandled(bot, message) {
-		bot.log(`UNHANDLED`, message.clean);
+		FALLBACK: 'Me temo que... no te entiendo',
 	},
 });
 

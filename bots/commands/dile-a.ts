@@ -7,7 +7,7 @@ import {
 	removeStart,
 } from '../../denord-bot/mod.ts';
 
-export default async function (
+export default async function dileA(
 	message: BotMessage,
 	bot: Applied<typeof Bot, DatabaseMixin>,
 ) {

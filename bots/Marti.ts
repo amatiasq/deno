@@ -1,5 +1,3 @@
-import { config } from 'https://deno.land/x/dotenv/mod.ts';
-
 import { Bot } from '../denord-bot/Bot.ts';
 import { mixin } from '../amq/code/mixin.ts';
 import {

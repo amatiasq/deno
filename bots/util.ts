@@ -9,8 +9,10 @@ import dileA from './commands/dile-a.ts';
 import encuesta from './commands/encuesta.ts';
 import ignoraA from './commands/ignora-a.ts';
 import quienEs from './commands/quien-es.ts';
+import learn from './middleware/learn.ts';
 import nicknames from './middleware/nicknames.ts';
 import tell from './middleware/tell.ts';
+import whoAmI from './middleware/who-am-i.ts';
 
 export function applyCommands(
 	bot: Applied<typeof Bot, DatabaseMixin, IgnoreMixin>,
@@ -35,6 +37,8 @@ export function applyCommands(
 export function applyMiddleware(
 	bot: Applied<typeof Bot, DatabaseMixin, NicksMixin>,
 ) {
+	bot.middleware(learn);
 	bot.middleware(nicknames);
 	bot.middleware(tell);
+	bot.middleware(whoAmI);
 }

@@ -3,12 +3,12 @@ import { Bot, IgnoreMixin, BotMessage } from '../../denord-bot/mod.ts';
 
 const gods = ['326474946996076556', '370218583675895809'];
 
-export default async function (
+export default async function ignoraA(
 	message: BotMessage,
 	bot: Applied<typeof Bot, IgnoreMixin>,
 ) {
 	if (!gods.includes(String(message.author.id))) {
-		return;
+		return message.reply('EREJE! osas atentar contra mis dioses?');
 	}
 
 	const target = message.firstMention;

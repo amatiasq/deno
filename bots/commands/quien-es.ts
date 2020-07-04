@@ -7,12 +7,8 @@ import {
 	DatabaseMixin,
 	splitWords,
 	trim,
-	UserSchema,
 } from '../../denord-bot/mod.ts';
-
-interface WhoUserSchema extends UserSchema {
-	who: string;
-}
+import { WhoUserSchema } from '../schemas/WhoUserSchema.ts';
 
 const FALLBACKS = [
 	'Quién?',
@@ -22,7 +18,7 @@ const FALLBACKS = [
 	'Tengo cara de ser tu asistente?',
 ];
 
-export default async function (
+export default async function quienEs(
 	message: BotMessage,
 	bot: Applied<typeof Bot, DatabaseMixin>,
 ) {

@@ -1,7 +1,7 @@
 import { Bot, BotMessage, NicksMixin } from '../../denord-bot/mod.ts';
 import { Applied } from '../../amq/code/mixin.ts';
 
-export default async function (
+export default async function nicknames(
 	message: BotMessage,
 	bot: Applied<typeof Bot, NicksMixin>,
 ) {

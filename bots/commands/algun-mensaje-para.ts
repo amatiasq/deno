@@ -2,7 +2,7 @@ import { TellUserSchema } from './../schemas/TellUserSchema.ts';
 import { Applied } from '../../amq/code/mixin.ts';
 import { Bot, DatabaseMixin, BotMessage } from '../../denord-bot/mod.ts';
 
-export default async function (
+export default async function algunMensajePara(
 	message: BotMessage,
 	bot: Applied<typeof Bot, DatabaseMixin>,
 ) {
