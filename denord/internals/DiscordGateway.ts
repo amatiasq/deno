@@ -4,6 +4,7 @@ import { DiscordEvent } from '../enum/DiscordEvent.ts';
 import { GatewayCloseCode } from '../enum/GatewayClose.ts';
 import { GatewayOpCode } from '../enum/GatewayOpCode.ts';
 import { Intent } from '../enum/Intent.ts';
+import { RawGatewayPayload } from '../raw/RawGatewayPayload.ts';
 import { GatewayBot } from '../structure/GatewayBot.ts';
 import {
 	DispatchPayload,
@@ -13,6 +14,7 @@ import {
 import { IdentifyCommand } from '../structure/IdentifyCommand.ts';
 import { DiscordApi } from './DiscordApi.ts';
 import { DiscordCache } from './DiscordCache.ts';
+import { DiscordSocket } from './DiscordSocket.ts';
 import { ShardMessage, ShardMessageType } from './ShardMessage.ts';
 
 export async function createGateway(
@@ -30,6 +32,10 @@ export async function createGateway(
 export class DiscordGateway {
 	private readonly shards = [] as Shard[];
 	private readonly connected = new Set<Shard>();
+	private readonly socket = new DiscordSocket(
+		console.log.bind(console, '[SOCKET]'),
+		x => this.onDiscordMessage(x),
+	);
 
 	private readonly _onClose = new Emitter<GatewayCloseCode>();
 	private readonly _onMessage = new Emitter<GatewayPayload>();
@@ -37,6 +43,10 @@ export class DiscordGateway {
 		DiscordEvent,
 		GatewayPayload['d']
 	>();
+
+	get hasShards() {
+		return this.gateway.shards > 1;
+	}
 
 	get first(): Shard {
 		const iterator = this.connected.values();
@@ -67,10 +77,18 @@ export class DiscordGateway {
 	) {}
 
 	send(payload: GatewayPayload) {
+		if (!this.hasShards) {
+			if (!this.socket.isConnected) {
+				throw new Error('Socket not ready');
+			}
+
+			return this.socket.send(payload);
+		}
+
 		const { first } = this;
 
 		if (!first) {
-			throw new Error('Socket not ready');
+			throw new Error('Shard not ready');
 		}
 
 		return first.postMessage({
@@ -80,7 +98,15 @@ export class DiscordGateway {
 	}
 
 	async connect() {
-		this.spawnShards();
+		if (this.hasShards) {
+			return this.spawnShards();
+		}
+
+		return this.socket.setup({
+			id: 0,
+			url: this.gateway.url,
+			identify: this.identify,
+		});
 	}
 
 	onClose(listener: (code: GatewayCloseCode) => void) {
@@ -141,7 +167,7 @@ export class DiscordGateway {
 				return this.connected.delete(shard);
 
 			case ShardMessageType.DISCORD_MESSAGE:
-				return this.processMessage(wrapGatewayPayload(x.payload));
+				return this.onDiscordMessage(x.payload);
 
 			case ShardMessageType.LOG:
 				return console.log(`[SHARD(${shard.id})]:`, ...x.values);
@@ -245,6 +271,10 @@ export class DiscordGateway {
 			// case DiscordEvent.WEBHOOKS_UPDATE:
 			// 	break;
 		}
+	}
+
+	private onDiscordMessage(x: RawGatewayPayload) {
+		return this.processMessage(wrapGatewayPayload(x));
 	}
 }
 

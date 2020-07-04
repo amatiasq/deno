@@ -2,6 +2,7 @@ import { RawGatewayPayload } from '../raw/RawGatewayPayload.ts';
 import { GatewayBot } from '../structure/GatewayBot.ts';
 import { GatewayPayload } from '../structure/GatewayPayload.ts';
 import { IdentifyCommand } from '../structure/IdentifyCommand.ts';
+import { DiscordSocketSetup } from './DiscordSocket.ts';
 
 export enum ShardMessageType {
 	// Orders
@@ -16,11 +17,8 @@ export enum ShardMessageType {
 	DISCORD_MESSAGE,
 }
 
-interface ShardMessage_CONNECT {
+interface ShardMessage_CONNECT extends DiscordSocketSetup {
 	type: ShardMessageType.CONNECT;
-	id: number;
-	gateway: GatewayBot;
-	identify: IdentifyCommand;
 }
 
 interface ShardMessage_SEND {
