@@ -1,30 +1,40 @@
 import { Vector, vector } from '../vector.ts';
 
-export interface Geometry<T = any> {
+export interface Geometry {
 	readonly type: 'circle' | 'rectangle';
 	readonly position: Vector;
 	readonly start: Vector;
 	readonly end: Vector;
-	withPosition(position: Vector): Geometry<T>;
+	withPosition(position: Vector): Geometry;
 	contains(point: Vector): boolean;
 	toCircle(): Circle;
 	toRectangle(): Rectangle;
 }
 
-export interface Circle extends Geometry<Circle> {
+export interface Circle extends Geometry {
 	readonly radius: number;
 	withRadius(radius: number): Circle;
 	withPosition(position: Vector): Circle;
+	toJSON(): {
+		type: 'circle';
+		position: ReturnType<Vector['toJSON']>;
+		radius: number;
+	};
 }
 
-export interface Rectangle extends Geometry<Rectangle> {
+export interface Rectangle extends Geometry {
 	readonly size: Vector;
 	withSize(size: Vector): Rectangle;
 	withPosition(position: Vector): Rectangle;
+	toJSON(): {
+		type: 'rectangle';
+		position: ReturnType<Vector['toJSON']>;
+		size: ReturnType<Vector['toJSON']>;
+	};
 }
 
 class CircleImpl implements Circle {
-	type = 'circle' as 'circle';
+	type = 'circle' as const;
 
 	constructor(readonly position: Vector, readonly radius: number) {}
 
@@ -55,13 +65,21 @@ class CircleImpl implements Circle {
 		return rectangle(this.position, vector(this.radius, this.radius));
 	}
 
+	toJSON() {
+		return {
+			type: this.type,
+			position: this.position.toJSON(),
+			radius: this.radius,
+		};
+	}
+
 	toString() {
 		return `circle${this.radius}->${this.position}`;
 	}
 }
 
 class RectangleImpl implements Rectangle {
-	type = 'rectangle' as 'rectangle';
+	type = 'rectangle' as const;
 
 	constructor(readonly position: Vector, readonly size: Vector) {}
 
@@ -94,6 +112,14 @@ class RectangleImpl implements Rectangle {
 
 	toRectangle() {
 		return this;
+	}
+
+	toJSON() {
+		return {
+			type: this.type,
+			position: this.position.toJSON(),
+			size: this.size.toJSON(),
+		};
 	}
 
 	toString() {

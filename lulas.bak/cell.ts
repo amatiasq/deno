@@ -1,3 +1,67 @@
+import { Vector } from '../amq/math/vector.ts';
+import { Circle } from '../amq/math/geometry.ts';
+
+export interface Cell {
+	velocity: Vector;
+	body: Circle;
+}
+
+class Buffer<T extends {}> {
+	private buffer: T;
+
+	constructor(private target: T) {
+		this.buffer = Object.assign({}, target);
+	}
+
+	get<TKey extends keyof T>(prop: TKey): T[TKey] {
+		return this.target[prop];
+	}
+
+	set<TKey extends keyof T>(prop: TKey, value: T[TKey]): void {
+		this.buffer[prop] = value;
+	}
+
+	flush() {
+		const { target, buffer } = this;
+		this.target = buffer;
+		this.buffer = Object.assign(target, buffer);
+	}
+}
+
+export class CellImpl implements Cell {
+	private readonly state: Buffer<Cell>;
+
+	constructor(velocity: Vector, body: Circle) {
+		this.state = new Buffer<Cell>({
+			velocity,
+			body,
+		});
+	}
+
+	toTransient() {
+		return Object.assign({}, this);
+	}
+
+	die() {
+		this.changes.isAlive = false;
+	}
+}
+
+interface Clonable {
+	clone(): this;
+}
+
+class BufferEntity<T extends Clonable> {
+	private buffer = this.state.clone();
+
+	constructor(private state: T) {}
+
+	private buffer: T;
+	private state: T;
+}
+
+/*
+
 import { random } from '../amq/math.ts';
 import { circle, Circle, Geometry, Rectangle } from '../amq/math/geometry.ts';
 import { QuadEntity } from '../amq/math/geometry/quadtree.ts';
@@ -56,3 +120,4 @@ function cell(position: Vector, size: number): Cell {
 		isColliding: false,
 	};
 }
+*/

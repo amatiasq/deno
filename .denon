@@ -1,15 +1,24 @@
 {
-  "scripts": {
-    "bots": {
-      "cmd": "deno run ./bots/main.ts",
-      "desc": "Start the bots",
-      "unstable": true
-    }
-  },
-  "allow": [
-    "write",
-    "plugin",
-    "read",
-    "net"
-  ]
+	"scripts": {
+		"bots": {
+			"cmd": "deno run ./bots/main.ts",
+			"desc": "Start the bots",
+			"unstable": true,
+			"allow": [
+				"write",
+				"plugin",
+				"read",
+				"net"
+			]
+		},
+		"lulas": {
+			"cmd": "deno run ./bin/serve.ts --canvas lulas/main.ts",
+			"desc": "Start lulas simulation",
+			"allow": [
+				"net",
+				"run",
+				"read"
+			]
+		}
+	}
 }

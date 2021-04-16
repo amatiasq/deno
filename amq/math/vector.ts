@@ -26,6 +26,9 @@ export interface Vector {
 	sub(val: number): Vector;
 	mul(val: number): Vector;
 	div(val: number): Vector;
+
+	toJSON(): Vectorish;
+	toString(): string;
 }
 
 const $with = withAccessor<Vector>();

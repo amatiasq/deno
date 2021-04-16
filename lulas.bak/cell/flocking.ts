@@ -23,7 +23,7 @@ export function flocking(cell: Cell, query: QueryMap) {
 function separation(cell: Cell, neighbors: Cell[]) {
 	const relative = neighbors
 		.map(({ body }) => cell.body.position.diff(body.position))
-		.reduce(merge);
+		.reduce(merge, ZERO);
 
 	return cell.velocity.merge(relative.mul(-1)).withMagnitude(1);
 }
@@ -39,7 +39,7 @@ function alignement(cell: Cell, neighbors: Cell[]) {
 function cohesion(cell: Cell, neighbors: Cell[]) {
 	const relative = neighbors
 		.map(({ body }) => cell.body.position.diff(body.position))
-		.reduce(merge);
+		.reduce(merge, ZERO);
 
 	return cell.velocity.merge(relative.mul(-1)).withMagnitude(1);
 }

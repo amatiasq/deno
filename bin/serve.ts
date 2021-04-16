@@ -182,7 +182,7 @@ if (import.meta.main) {
 		Deno.exit(1);
 	}
 
-	const extra = canvas ? '<canvas></canvas>' : html || '';
+	const extra = canvas ? `<canvas></canvas>${html || ''}` : html || '';
 	start(Deno.cwd(), file as string, port, extra);
 }
 
